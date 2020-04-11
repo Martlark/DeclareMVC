@@ -1,13 +1,7 @@
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._dataHash = '';
         $(document).ready(() => this._start());
-    }
-
-    addChild(id, child) {
-        child._parent = this;
-        this.children[id] = child;
     }
 
     _dataGetContext(el, m) {
@@ -99,6 +93,7 @@ class DeclareMVC {
                 if (currentKeys.indexOf(k.toString()) === -1) {
                     const element = $(state.html);
                     element.attr('data-child-id', k);
+                    element.attr('data-child-prop', $el.data('repeat'));
                     $el.append(element);
                     hasMutated = true;
                 }
@@ -107,15 +102,15 @@ class DeclareMVC {
         return hasMutated;
     }
 
+
     _dataText() {
         $("[data-text]").each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'));
-            if (m.length > 0) {
-                const text = eval(m).toString();
-                const el_text = $(el).text();
-                if (text != el_text) {
-                    $(el).text(text);
-                }
+            let text = eval(m) || '';
+            text = text.toString();
+            const el_text = $(el).text();
+            if (text != el_text) {
+                $(el).text(text);
             }
         });
     }
