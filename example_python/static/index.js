@@ -17,7 +17,8 @@ class ViewModel extends DeclareMVC {
         this.counter = 0;
         this.inputValue = '';
         this.checkboxValue = false;
-        this.selectValue = '';
+        this.selectValue = 'feline';
+        this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
         $(document).ready(() => {
             $.ajax('/names').then(results => {
@@ -46,4 +47,4 @@ class ViewModel extends DeclareMVC {
     }
 }
 
-let viewModel = new ViewModel();
+const viewModel = new ViewModel();
