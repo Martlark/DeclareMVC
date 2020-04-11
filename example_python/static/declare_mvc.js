@@ -4,6 +4,15 @@ class DeclareMVC {
         $(document).ready(() => this._start());
     }
 
+    _evalError(thing, _context){
+        try {
+            return eval(thing);
+        } catch (e) {
+            console.log(e, thing);
+        }
+        return null;
+    }
+
     _dataGetContext(el, m) {
         const id = $(el).closest('[data-child-id]').data('child-id');
         const prop = $(el).closest('[data-repeat]').data('repeat') || $(el).closest('[data-prop]').data('prop');
@@ -39,16 +48,19 @@ class DeclareMVC {
     }
 
     _dataClick() {
+        /**
+         * add handles for a click event.
+         */
         $("body").on('click', "[data-click]", el => {
             const [_context, m] = this._dataGetContext(el.target, $(el.target).data('click'));
-            eval(m);
+            this._evalError(m, _context);
         });
     }
 
     _dataVisible() {
         $("[data-visible]").each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('visible'));
-            const newState = eval(m);
+            const newState = this._evalError(m, _context);;
             if (newState !== $(el).is(':visible')) {
                 if (newState) {
                     $(el).show();
@@ -103,7 +115,7 @@ class DeclareMVC {
     _dataText() {
         $("[data-text]").each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'));
-            let text = eval(m) || '';
+            let text = this._evalError(m, _context) || '';
             text = text.toString();
             const el_text = $(el).text();
             if (text != el_text) {
@@ -114,13 +126,14 @@ class DeclareMVC {
 
     _dataValue() {
         /***
-         * set the value of an input from a instance prop
+         * set the value of an input from a instance prop when first used.
+         *
          */
         $("[data-set]").each((index, el) => {
             const tagName = $(el)[0].tagName;
             if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
                 const [_context, m] = this._dataGetContext(el, $(el).data('set'));
-                const text = eval(m);
+                const text = this._evalError(m, _context);
                 if (text != $(el).val()) {
                     $(el).val(text);
                 }
@@ -129,6 +142,9 @@ class DeclareMVC {
     }
 
     _dataSet() {
+        /**
+         * set a prop of an object instance from an input type
+         */
         const set = (el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('set'));
             let v = $(el).val() || '';
@@ -140,10 +156,9 @@ class DeclareMVC {
                 v = $(el).is(':checked');
                 setter = `${m}=${v}`
             }
-            eval(setter);
+            this._evalError(setter, _context);
         };
         $("[data-set]").each((index, el) => set(el));
-        $('body').on('keyup', "[data-set]", evt => set(evt.target));
-        $('body').on('change', "[data-set]", evt => set(evt.target));
+        $('body').on('keyup change', "[data-set]", evt => set(evt.target));
     }
 }

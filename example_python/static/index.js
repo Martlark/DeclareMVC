@@ -7,7 +7,6 @@ class PersonModel {
     }
 
     clickRemovePerson() {
-        console.log('remove', this.id);
         delete this._parentList[this.id];
     }
 }
