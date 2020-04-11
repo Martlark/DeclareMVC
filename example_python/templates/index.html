@@ -49,7 +49,7 @@
         </tr>
     </tbody>
 </table>
-<h3>Other Persons</h3>
+<h3>Other Children</h3>
 <table>
     <thead>
     <tr>
@@ -62,6 +62,27 @@
         <tbody data-repeat="otherChildren">
         <tr>
             <td><button data-click="clickRemovePerson()">Remove</button><span data-text="id"></span></td>
+            <td data-text="title"></td>
+            <td data-text="name"></td>
+            <td><input data-set="name"></td>
+        </tr>
+    </tbody>
+</table>
+<h3>List Children</h3>
+<button data-click="clickAddListPerson()">Add List Child</button>
+
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>Title</th>
+        <th>Name</th>
+        <th>New Name</th>
+    </tr>
+    </thead>
+        <tbody data-repeat="listChildren">
+        <tr>
+            <td><button data-click="clickRemoveListPerson()">Remove</button><span data-text="id"></span></td>
             <td data-text="title"></td>
             <td data-text="name"></td>
             <td><input data-set="name"></td>

@@ -4,10 +4,15 @@ class PersonModel {
         this.title = props.title;
         this.name = props.name;
         this._parentList = props._parentList;
+        this._parent = props._parent;
     }
 
     clickRemovePerson() {
         delete this._parentList[this.id];
+    }
+
+    clickRemoveListPerson() {
+        this._parent.listChildren = this._parent.listChildren.filter(p => p.id !== this.id);
     }
 }
 
@@ -20,26 +25,29 @@ class ViewModel extends DeclareMVC {
         this.selectValue = 'feline';
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
+        this.listChildren = [];
         $(document).ready(() => {
             $.ajax('/names').then(results => {
-                results.forEach(child => this.addChild(child.id, new PersonModel(child)));
+                results.forEach(child => this.addChild(new PersonModel(child)));
                 results.forEach(child => {
-                    child._parentList = this.otherChildren;
                     child.id += 500;
-                    this.otherChildren[child.id] = new PersonModel(child);
+                    this.addChild(new PersonModel(child), this.otherChildren);
+                    child.id += 500;
+                    this.addChild(new PersonModel(child), this.listChildren);
                 });
             });
         });
     }
 
-    addChild(id, child) {
-        child._parentList = this.children;
-        this.children[id] = child;
-    }
-
     clickAddPerson() {
         const id = Math.round(Math.random() * 100000);
-        this.addChild(id, new PersonModel({id: id, name: `Person ${id}`, title: 'Mrs'}));
+        this.addChild(new PersonModel({id: id, name: `Person ${id}`, title: 'Mrs'}));
+        return true;
+    }
+
+    clickAddListPerson() {
+        const id = Math.round(Math.random() * 100000);
+        this.listChildren.push(new PersonModel({id: id, name: `Added Person ${id}`, title: 'Mrs'}));
     }
 
     clickButton1() {

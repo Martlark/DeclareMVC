@@ -5,11 +5,23 @@ class DeclareMVC {
         $(document).ready(() => this._start());
     }
 
+    addChild(child, childrenProp) {
+        childrenProp = childrenProp || this.children;
+        child._parent = this;
+        child._parentList = childrenProp;
+        if (typeof childrenProp == Array) {
+            childrenProp.push(child);
+        } else {
+            childrenProp[child.id] = child
+        }
+        this.mutated();
+    }
+
     _evalError(thing, _context) {
         try {
             return eval(thing);
         } catch (e) {
-            console.log(e, thing);
+            console.error(e, thing);
         }
         return null;
     }
@@ -35,17 +47,23 @@ class DeclareMVC {
         return [_context, m]
     }
 
+    mutated() {
+        /**
+         * update elements on the page after something may have
+         * changed
+         */
+        if (this._dataRepeat()) {
+            this._dataValue();
+        }
+        this._dataText();
+        this._dataVisible();
+    }
+
     _start() {
         this._dataValue(); // set initial input type values
         this._dataSet(); // set updaters from inputs
         this._dataClick(); // set clicks
-        setInterval(() => {
-            if (this._dataRepeat()) {
-                this._dataValue();
-            }
-            this._dataText();
-            this._dataVisible();
-        }, 100);
+        this.mutated();
     }
 
     _dataClick() {
@@ -54,7 +72,8 @@ class DeclareMVC {
          */
         $("body").on('click', "[data-click]", el => {
             const [_context, m] = this._dataGetContext(el.target, $(el.target).data('click'));
-            this._evalError(m, _context);
+            if(!this._evalError(m, _context))
+                this.mutated();
         });
     }
 
@@ -116,8 +135,7 @@ class DeclareMVC {
     _dataText() {
         $("[data-text]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'));
-            let text = this._evalError(m, _context) || '';
-            text = text.toString();
+            let text = this._evalError(m, _context).toString();
             const el_text = $(el).text();
             if (text !== el_text) {
                 $(el).text(text);
@@ -167,6 +185,7 @@ class DeclareMVC {
                 setter = `${m}=${v}`
             }
             this._evalError(setter, _context);
+            this.mutated();
         };
         $("[data-set]", this._parentSelector).each((index, el) => set(el));
         $(this._parentSelector).on('keyup change', "[data-set]", evt => set(evt.target));

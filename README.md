@@ -7,6 +7,10 @@ It features automatic context assignment so no messing about with *this* or *bin
 ideal for adding UI behaviours to existing HTML pages and controllers.  Especially CRUD pages that require handling child
 objects.
 
+There is no support for components, extensions or complicated rendering.  Use a templating language such as 
+JINJA2 or similar for those uses.  The method for determining page updates is rather simple, any *data-click* or *data-set*
+action causes an update event.  When adding to a child list use the *addChild()* method to raise an update event.
+
 Supports these declarations:
 
 * data-set
@@ -39,12 +43,13 @@ Sets the text value of a HTML element from an instance property or method.
 data-visible
 ------------
 
-Shows or hides an HTML elment based upon the value of an instance property or method.
+Shows or hides an HTML element based upon the value of an instance property or method.
 
 data-options
 ------------
 
-Provide the options for a SELECT input.
+Provide the options for a SELECT input.  Must return a list of options.  This can either be a simple list of values or a 
+list of Objects, with this format: {value: "a", label: "The letter A"}.
 
 Example:
 ========
@@ -68,18 +73,21 @@ Jquery is required.  Include declare_mvc.js as per the example.
     
 Extend your page controller (index.js) as shown:
     
-    class ViewModel extends DeclareMVC {
-        constructor(props) {
-            super();
-            this.counter = 0;
-        }
-        
-        clickButton1() {
-            this.counter++;
-        }
+```JavaScript
+class ViewModel extends DeclareMVC {
+    constructor(props) {
+        super();
+        this.counter = 0;
     }
-    // ... ... ...
-    const viewModel = new ViewModel();
+    
+    clickButton1() {
+        this.counter++;
+    }
+}
+// ... ... ...
+
+const viewModel = new ViewModel();
+```
 
 DeclareMVC will start automatically once the page has completed loading.  
 
@@ -87,8 +95,8 @@ Declare your page controls that link your view model to the page, as per this ex
 
     <button data-click="clickButton1()">Add to counter</button>
     <p>counter:<span data-text="counter"></span></p>
-    <h5 data-visible="counter>10">Counter is greater than 10</h5>
-    <h5 data-visible="counter<10">Counter is less than 10</h5>
+    <h5 data-visible="counter > 10">Counter is greater than 10</h5>
+    <h5 data-visible="counter < 10">Counter is less than 10</h5>
 
 There are three data declarations here:
 
@@ -97,7 +105,8 @@ There are three data declarations here:
 * data-visible
 
 **data-click** links a view method to a button or clickable item on the page.  NOTE: there is no need to specify *viewModel*, *this* 
-or *bind()*.  The correct context for calling the click method is determined by the HTML hierarchy.
+or *bind()*.  The correct context for calling the click method is determined by the HTML hierarchy.  In this example
+a link to the *clickButton1()* method is made.
 
 **data-text** links a property from the view to a text item on the page.  Whenever the property is changed the 
 text for this element will change with it.  Any valid JavaScript that returns a value can be used.
@@ -106,3 +115,62 @@ text for this element will change with it.  Any valid JavaScript that returns a 
 changes the visible status will be recalculated.  Any valid JavaScript can be used as long as it returns true or false.
 
 As you can see DeclareMVC automatically handles the context of the view controller for the given HTML element.
+
+Determining context
+===================
+
+DeclareMVC uses the element it is declared in to determine the correct context of the view controller to use.  It 
+makes a simple scan of the **data-**="method" to allow it to add the context the method requires before it is called.  Any method value
+that contains one of these: 
+
+* . 
+* && 
+* || 
+
+**must** completely specify the calling context, otherwise it is automatic.
+
+A list of child objects
+-----------------------
+    
+DeclareMVC is most useful to create a simple CRUD interface.  In this example the children property of the viewModel
+is populated from a REST call.
+
+    ....
+        this.children = {};
+
+    ....
+        $(document).ready(() => {
+            $.ajax('/names').then(results => {
+                results.forEach(child => {
+                    this.addChild(new PersonModel(child));
+                });
+            });
+        });
+    ....
+    
+Each child class instance is set into the *this.children* object using the id of the child as the property key.  This is
+the best way to organize children.  The *id* property of the child is **required**, it is used as the key for context
+and managing HTML elements.
+    
+    <table>
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>New Name</th>
+        </tr>
+        </thead>
+            <tbody data-repeat="children">
+            <tr>
+                <td><button data-click="clickRemovePerson()">Remove</button><span data-text="id"></span></td>
+                <td data-text="title"></td>
+                <td data-text="name"></td>
+                <td><input data-set="name"></td>
+            </tr>
+        </tbody>
+    </table>
+
+The HTML uses the *data-repeat* directive to create the <tr> rows of the table.  DeclareMVC will dynamically maintain the
+list from the properties of the children.  Here the entire <tr> element will be repeated.  When items are removed the 
+corresponding <tr> element will be removed as long as a *data-click* causes the removal.
