@@ -1,10 +1,11 @@
 class DeclareMVC {
     constructor(props) {
         this.children = {};
+        this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
 
-    _evalError(thing, _context){
+    _evalError(thing, _context) {
         try {
             return eval(thing);
         } catch (e) {
@@ -58,9 +59,9 @@ class DeclareMVC {
     }
 
     _dataVisible() {
-        $("[data-visible]").each((index, el) => {
+        $("[data-visible]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('visible'));
-            const newState = this._evalError(m, _context);;
+            const newState = this._evalError(m, _context);
             if (newState !== $(el).is(':visible')) {
                 if (newState) {
                     $(el).show();
@@ -73,7 +74,7 @@ class DeclareMVC {
 
     _dataRepeat() {
         let hasMutated = false;
-        $("[data-repeat]").each((index, el) => {
+        $("[data-repeat]", this._parentSelector).each((index, el) => {
             const $el = $(el);
             let state = $el.data('repeat-state');
             if (!state) {
@@ -113,12 +114,12 @@ class DeclareMVC {
 
 
     _dataText() {
-        $("[data-text]").each((index, el) => {
+        $("[data-text]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'));
             let text = this._evalError(m, _context) || '';
             text = text.toString();
             const el_text = $(el).text();
-            if (text != el_text) {
+            if (text !== el_text) {
                 $(el).text(text);
             }
         });
@@ -129,12 +130,21 @@ class DeclareMVC {
          * set the value of an input from a instance prop when first used.
          *
          */
-        $("[data-set]").each((index, el) => {
+        $("[data-options]", this._parentSelector).each((index, el) => {
+            const [_context, m] = this._dataGetContext(el, $(el).data('options'));
+            const options = this._evalError(m, _context) || [];
+            $(el).html(null);
+            options.forEach(opt => {
+                $(el).append(`<option value=${opt.value || opt}>${opt.label || opt}</option>`);
+            })
+        });
+
+        $("[data-set]", this._parentSelector).each((index, el) => {
             const tagName = $(el)[0].tagName;
             if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
                 const [_context, m] = this._dataGetContext(el, $(el).data('set'));
-                const text = this._evalError(m, _context);
-                if (text != $(el).val()) {
+                const text = this._evalError(m, _context) || '';
+                if (text.toString() !== $(el).val()) {
                     $(el).val(text);
                 }
             }
@@ -158,7 +168,7 @@ class DeclareMVC {
             }
             this._evalError(setter, _context);
         };
-        $("[data-set]").each((index, el) => set(el));
-        $('body').on('keyup change', "[data-set]", evt => set(evt.target));
+        $("[data-set]", this._parentSelector).each((index, el) => set(el));
+        $(this._parentSelector).on('keyup change', "[data-set]", evt => set(evt.target));
     }
 }
