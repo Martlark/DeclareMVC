@@ -6,7 +6,7 @@ class DeclareMVC {
 
     _dataGetContext(el, m) {
         const id = $(el).closest('[data-child-id]').data('child-id');
-        const prop = $(el).closest('[data-child-prop]').data('child-prop');
+        const prop = $(el).closest('[data-repeat]').data('repeat') || $(el).closest('[data-prop]').data('prop');
         let _context = this.children[Number(id)] || this;
         if (prop) {
             _context = eval(`this.${prop}[Number(id)]`) || this;
@@ -26,9 +26,9 @@ class DeclareMVC {
     }
 
     _start() {
-        this._dataValue();
-        this._dataSet();
-        this._dataClick();
+        this._dataValue(); // set initial input type values
+        this._dataSet(); // set updaters from inputs
+        this._dataClick(); // set clicks
         setInterval(() => {
             if (this._dataRepeat()) {
                 this._dataValue();
@@ -48,14 +48,12 @@ class DeclareMVC {
     _dataVisible() {
         $("[data-visible]").each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('visible'));
-            if (m.length > 0) {
-                const newState = eval(m);
-                if (newState !== $(el).is(':visible')) {
-                    if (newState) {
-                        $(el).show();
-                    } else {
-                        $(el).hide();
-                    }
+            const newState = eval(m);
+            if (newState !== $(el).is(':visible')) {
+                if (newState) {
+                    $(el).show();
+                } else {
+                    $(el).hide();
                 }
             }
         });
@@ -93,7 +91,6 @@ class DeclareMVC {
                 if (currentKeys.indexOf(k.toString()) === -1) {
                     const element = $(state.html);
                     element.attr('data-child-id', k);
-                    element.attr('data-child-prop', $el.data('repeat'));
                     $el.append(element);
                     hasMutated = true;
                 }
@@ -116,9 +113,13 @@ class DeclareMVC {
     }
 
     _dataValue() {
-        $("[data-value]").each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('value'));
-            if (m.length > 0) {
+        /***
+         * set the value of an input from a instance prop
+         */
+        $("[data-set]").each((index, el) => {
+            const tagName = $(el)[0].tagName;
+            if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
+                const [_context, m] = this._dataGetContext(el, $(el).data('set'));
                 const text = eval(m);
                 if (text != $(el).val()) {
                     $(el).val(text);
@@ -130,17 +131,16 @@ class DeclareMVC {
     _dataSet() {
         const set = (el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('set'));
-            if (m.length > 0) {
-                let v = $(el).val().replace(/"/g, '\\"');
-                let setter = `${m}="${v}"`;
-                const tagName = $(el)[0].tagName;
-                const tagType = $(el)[0].type;
-                if (tagType === 'checkbox') {
-                    v = $(el).is(':checked');
-                    setter = `${m}=${v}`
-                }
-                eval(setter);
+            let v = $(el).val() || '';
+            v = v.replace(/"/g, '\\"');
+            let setter = `${m}="${v}"`;
+            const tagName = $(el)[0].tagName;
+            const tagType = $(el)[0].type;
+            if (tagType === 'checkbox') {
+                v = $(el).is(':checked');
+                setter = `${m}=${v}`
             }
+            eval(setter);
         };
         $("[data-set]").each((index, el) => set(el));
         $('body').on('keyup', "[data-set]", evt => set(evt.target));
