@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example DeclareMVC application</title>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="static/declare_mvc.js"></script>
+    <script src="static/index.js"></script>
+</head>
+<body>
+<h1>Title</h1>
+<h5 id="message_1" style="background-color: yellow"></h5>
+
+<label>Input 1<input data-set="inputValue" value=""></label>
+<p>inputValue:<span data-text="inputValue"></span></p>
+
+<button data-click="clickButton1()">Add to counter</button>
+<button data-click="viewModel.counter=0">Reset counter</button>
+<p>counter:<span data-text="counter"></span></p>
+<h5 data-visible="viewModel.counter>10">Counter is greater than 10</h5>
+<h5 data-visible="viewModel.counter<10">Counter is less than 10</h5>
+
+<label>Checkbox<input type="checkBox" data-set="checkboxValue" checked></label>
+<p>checkboxValue:<span data-text="checkboxValue"></span></p>
+
+<label>Select<select data-set="selectValue">
+    <option value="dog">Dog</option>
+    <option value="cat">Cat</option>
+</select></label>
+
+<p>selectValue:<span data-text="selectValue"></span></p>
+<button data-click="clickAddPerson()">Add Person</button>
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>Title</th>
+        <th>Name</th>
+        <th>New Name</th>
+    </tr>
+    </thead>
+        <tbody data-repeat="children">
+        <tr>
+            <td><button data-click="clickRemovePerson()">Remove</button><span data-text="id"></span></td>
+            <td data-text="title"></td>
+            <td data-text="name"></td>
+            <td><input data-set="name" data-value="name"></td>
+        </tr>
+    </tbody>
+</table>
+<h3>Other Persons</h3>
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>Title</th>
+        <th>Name</th>
+        <th>New Name</th>
+    </tr>
+    </thead>
+        <tbody data-repeat="children">
+        <tr data-child-prop="otherChildren">
+            <td><button data-click="clickRemovePerson()">Remove</button><span data-text="id"></span></td>
+            <td data-text="title"></td>
+            <td data-text="name"></td>
+            <td><input data-set="name" data-value="name"></td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>
