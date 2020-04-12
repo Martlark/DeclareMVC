@@ -19,6 +19,8 @@ class ChildModel {
 class ViewModel extends DeclareMVC {
     constructor(props) {
         super(props);
+        this.title = 'Declare MVC Example';
+        this.h3Attributes = {style:'background: yellow'};
         this.counter = 0;
         this.inputValue = '';
         this.checkboxValue = false;
@@ -26,6 +28,7 @@ class ViewModel extends DeclareMVC {
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
         this.listChildren = [];
+
         $(document).ready(() => {
             $.ajax('/names').then(results => {
                 results.forEach(child => this.childAdd(new ChildModel(child)));

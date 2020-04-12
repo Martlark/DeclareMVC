@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Example DeclareMVC application</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
     <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -11,8 +15,8 @@
     <script src="static/index.js"></script>
 </head>
 <body>
-<h1>Title</h1>
-<div id="view-content">
+<h1 data-text="title">Title</h1>
+<div class="container" id="view-content">
     <h5 id="message" style="background-color: yellow"></h5>
 
     <label>Input 1<input data-set="inputValue" value="" id="input_input"></label>
@@ -32,78 +36,81 @@
 
     <p>selectValue:<span data-text="selectValue" id="selectValue"></span></p>
 </div>
+<div class="container">
+    <h3>Children</h3>
+    <button data-click="clickAddChild()" id="add_child_button">Add Child</button>
+    <button data-click="clickClearChildren()" id="clear_child_button">Clear List Children</button>
+    <table id="children_table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>New Name</th>
+        </tr>
+        </thead>
+        <tbody data-repeat="children">
+        <tr>
+            <td>
+                <button data-click="clickRemoveChild()">Remove</button>
+                <span data-text="id"></span></td>
+            <td data-text="title"></td>
+            <td data-text="name"></td>
+            <td><input data-set="name"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="container">
+    <h3 data-attr="h3Attributes">Other Children</h3>
+    <button data-click="clickAddOtherChild()" id="add_other_child_button">Add Other Child</button>
+    <button data-click="clickClearOtherChild()" id="clear_other_child_button">Add Other Child</button>
+    <table id="other_children_table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>New Name</th>
+        </tr>
+        </thead>
+        <tbody data-repeat="otherChildren">
+        <tr>
+            <td>
+                <button data-click="clickRemoveChild()">Remove</button>
+                <span data-text="id"></span></td>
+            <td data-text="title"></td>
+            <td data-text="name"></td>
+            <td><input data-set="name"></td>
+        </tr>
+        </tbody>
+    </table>
+    <h3>List Children</h3>
+    <button data-click="clickAddListChild()" id="add_list_child_button">Add List Child</button>
+    <button data-click="clickClearListChild()" id="clear_list_child_button">Clear List Children</button>
 
-<h3>Children</h3>
-<button data-click="clickAddChild()" id="add_child_button">Add Child</button>
-<button data-click="clickClearChildren()" id="clear_child_button">Clear List Children</button>
-<table id="children_table">
-    <thead>
-    <tr>
-        <th>id</th>
-        <th>Title</th>
-        <th>Name</th>
-        <th>New Name</th>
-    </tr>
-    </thead>
-    <tbody data-repeat="children">
-    <tr>
-        <td>
-            <button data-click="clickRemoveChild()">Remove</button>
-            <span data-text="id"></span></td>
-        <td data-text="title"></td>
-        <td data-text="name"></td>
-        <td><input data-set="name"></td>
-    </tr>
-    </tbody>
-</table>
+    <table id="list_children_table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>New Name</th>
+        </tr>
+        </thead>
+        <tbody data-repeat="listChildren">
+        <tr>
+            <td>
+                <button data-click="clickRemoveListChild()">Remove</button>
+                <span data-text="id"></span></td>
+            <td data-text="title"></td>
+            <td data-text="name"></td>
+            <td><input data-set="name"></td>
+        </tr>
+        </tbody>
+    </table>
 
-<h3>Other Children</h3>
-<button data-click="clickAddOtherChild()" id="add_other_child_button">Add Other Child</button>
-<button data-click="clickClearOtherChild()" id="clear_other_child_button">Add Other Child</button>
-<table id="other_children_table">
-    <thead>
-    <tr>
-        <th>id</th>
-        <th>Title</th>
-        <th>Name</th>
-        <th>New Name</th>
-    </tr>
-    </thead>
-    <tbody data-repeat="otherChildren">
-    <tr>
-        <td>
-            <button data-click="clickRemoveChild()">Remove</button>
-            <span data-text="id"></span></td>
-        <td data-text="title"></td>
-        <td data-text="name"></td>
-        <td><input data-set="name"></td>
-    </tr>
-    </tbody>
-</table>
-<h3>List Children</h3>
-<button data-click="clickAddListChild()" id="add_list_child_button">Add List Child</button>
-<button data-click="clickClearListChild()" id="clear_list_child_button">Clear List Children</button>
-
-<table id="list_children_table">
-    <thead>
-    <tr>
-        <th>id</th>
-        <th>Title</th>
-        <th>Name</th>
-        <th>New Name</th>
-    </tr>
-    </thead>
-    <tbody data-repeat="listChildren">
-    <tr>
-        <td>
-            <button data-click="clickRemoveListChild()">Remove</button>
-            <span data-text="id"></span></td>
-        <td data-text="title"></td>
-        <td data-text="name"></td>
-        <td><input data-set="name"></td>
-    </tr>
-    </tbody>
-</table>
-<p id="loading_finished"></p>
+    <p id="loading_finished"></p>
+</div>
 </body>
 </html>

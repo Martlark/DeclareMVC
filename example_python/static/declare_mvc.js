@@ -36,7 +36,7 @@ class DeclareMVC {
         if (Array.isArray(childrenProp)) {
             childrenProp.length = 0;
         } else {
-            Object.keys(childrenProp).forEach(k=>{
+            Object.keys(childrenProp).forEach(k => {
                 delete childrenProp[k];
             });
         }
@@ -156,6 +156,16 @@ class DeclareMVC {
             if (text !== el_text) {
                 $(el).text(text);
             }
+        });
+        $("[data-attr]", this._parentSelector).each((index, el) => {
+            const [_context, m] = this._dataGetContext(el, $(el).data('attr'));
+            let props = this._evalError(m, _context);
+            Object.keys(props).forEach(k => {
+                const el_text = $(el).attr(k) || '';
+                if (props[k] !== el_text) {
+                    $(el).attr(k, props[k]);
+                }
+            });
         });
     }
 
