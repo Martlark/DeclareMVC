@@ -24,12 +24,15 @@ class ViewModel extends DeclareMVC {
         this.titleAttrIndex = 0;
         this.titleAttributes = {style: `background: ${this.titleColors[this.titleAttrIndex]}`};
         this.counter = 0;
+        this.num = 20;
         this.inputValue = '';
         this.checkboxValue = false;
         this.selectValue = 'feline';
+        this.funcValue = '';
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
         this.listChildren = [];
+
 
         $(document).ready(() => {
             $.ajax('/names').then(results => {
@@ -44,6 +47,13 @@ class ViewModel extends DeclareMVC {
                 $('#loading_finished').text('finished');
             });
         });
+    }
+
+    func(newValue) {
+        if( typeof newValue == "undefined"){
+            return this.funcValue;
+        }
+        this.funcValue=newValue.toString().toUpperCase();
     }
 
     clickTitleNextColor() {
@@ -93,8 +103,8 @@ class ViewModel extends DeclareMVC {
         });
     }
 
-    clickButton1() {
-        this.counter++;
+    clickButton1(value) {
+        this.counter+=value;
     }
 }
 

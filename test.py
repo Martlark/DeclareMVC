@@ -89,11 +89,12 @@ class SeleniumTest(unittest.TestCase):
             item = self.driver.find_element_by_id(item)
         self.assertTrue(item.is_displayed(), f'Item is not displayed {msg}')
 
-    def assertHidden(self, item: object, msg=''):
+    def assertHidden(self, item: object, msg: str = ''):
         """
         assert that item is hidden.
 
         :param item: id or a selenium element.  if id is str tries to find by id
+        :param msg: optional message when test fails
         """
         if type(item) == str:
             item = self.driver.find_element_by_id(item)
@@ -193,7 +194,7 @@ class PageIndex(SeleniumTest):
             self.assertEqual(opt['value'], p.text)
 
     def test_counter_click(self):
-        button = self.driver.find_element_by_id('counter_button')
+        button = self.driver.find_element_by_id('counter_add_button')
         p = self.driver.find_element_by_id('counter')
         p_greater = self.driver.find_element_by_id('counter_greater_than_10')
         p_less = self.driver.find_element_by_id('counter_less_than_10')
@@ -210,7 +211,7 @@ class PageIndex(SeleniumTest):
                 self.assertDisplayed(p_greater, z)
             button.click()
 
-        button = self.driver.find_element_by_id('reset_counter_button').click()
+        button = self.driver.find_element_by_id('counter_reset_button').click()
         self.assertEqual(0, int(p.text))
         self.assertDisplayed(p_less, 0)
         self.assertHidden(p_greater, 0)

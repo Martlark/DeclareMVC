@@ -172,6 +172,7 @@ class DeclareMVC {
     _dataValue() {
         /***
          * set the value of an input from a instance prop when first used.
+         * set up select option values
          *
          */
         $("[data-options]", this._parentSelector).each((index, el) => {
@@ -209,6 +210,15 @@ class DeclareMVC {
             if (tagType === 'checkbox') {
                 v = $(el).is(':checked');
                 setter = `${m}=${v}`
+            }else{
+                switch(typeof eval(m)){
+                    case "function":
+                        setter = `${m}("${v}")`;
+                        break;
+                    case "number":
+                        setter = `${m}=Number("${v}")`;
+                        break;
+                }
             }
             this._evalError(setter, _context);
             this.mutated();
