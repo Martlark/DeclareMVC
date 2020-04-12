@@ -20,7 +20,9 @@ class ViewModel extends DeclareMVC {
     constructor(props) {
         super(props);
         this.title = 'Declare MVC Example';
-        this.h3Attributes = {style:'background: yellow'};
+        this.titleColors = ['yellow', 'green', 'blue'];
+        this.titleAttrIndex = 0;
+        this.titleAttributes = {style: `background: ${this.titleColors[this.titleAttrIndex]}`};
         this.counter = 0;
         this.inputValue = '';
         this.checkboxValue = false;
@@ -42,6 +44,13 @@ class ViewModel extends DeclareMVC {
                 $('#loading_finished').text('finished');
             });
         });
+    }
+
+    clickTitleNextColor() {
+        if (++this.titleAttrIndex >= this.titleColors.length) {
+            this.titleAttrIndex = 0;
+        }
+        this.titleAttributes = {style: `background: ${this.titleColors[this.titleAttrIndex]}`};
     }
 
     clickAddChild() {

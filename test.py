@@ -118,7 +118,7 @@ class PageIndex(SeleniumTest):
     def load_page(self):
         start_time = time.time()
         self.driver.get(f'{host_name}/')
-        while time.time() < start_time + 3:
+        while time.time() < start_time + 5:
             p = self.driver.find_element_by_id('loading_finished')
             if p.text == 'finished':
                 return True
@@ -130,18 +130,17 @@ class PageIndex(SeleniumTest):
         self.assertEqual(message, self.driver.find_element_by_id(f'message').text)
 
     def setUp(self):
+        self.load_page()
         self.initial_list_count = 5
 
     def test_load(self):
-        self.load_page()
         main_content = self.driver.find_element_by_id('view-content')
         self.assertTrue(main_content)
 
     def test_children_tables(self):
-        self.load_page()
         for t, b, c in [('children_table', 'add_child_button', 'clear_child_button'),
-                     ('list_children_table', 'add_list_child_button', 'clear_list_child_button'),
-                     ('other_children_table', 'add_other_child_button', 'clear_other_child_button')]:
+                        ('list_children_table', 'add_list_child_button', 'clear_list_child_button'),
+                        ('other_children_table', 'add_other_child_button', 'clear_other_child_button')]:
             table = self.driver.find_element_by_id(t)
             self.assertTrue(table, t)
             tr_list = table.find_elements_by_css_selector('tbody tr')
@@ -172,8 +171,6 @@ class PageIndex(SeleniumTest):
             self.assertEqual(1, len(tr_list), t)
 
     def test_input(self):
-        self.load_page()
-
         input_input = self.driver.find_element_by_id('input_input')
         v = self.random_string()
         self.set_text('input_input', v)
@@ -181,17 +178,21 @@ class PageIndex(SeleniumTest):
         self.assertEqual(v, input_input.get_attribute('value'))
         self.assertEqual(v, input_input_p.text)
 
-    def test_select(self):
-        self.load_page()
+    def test_attr(self):
+        s = self.driver.find_element_by_id('title')
+        self.assertEqual('background: yellow;', s.get_attribute('style'))
 
+    def test_select(self):
         s = self.driver.find_element_by_id('select')
         p = self.driver.find_element_by_id('selectValue')
         self.assertEqual("feline", p.text)
         self.assertEqual("feline", s.get_attribute("value"))
+        for opt in [{'value': 'dog', 'label': 'Dog'}, {'value': 'feline', 'label': 'Cat'}]:
+            o = s.find_elements_by_css_selector(f"option[value={opt['value']}")[0]
+            o.click()
+            self.assertEqual(opt['value'], p.text)
 
     def test_counter_click(self):
-        self.load_page()
-
         button = self.driver.find_element_by_id('counter_button')
         p = self.driver.find_element_by_id('counter')
         p_greater = self.driver.find_element_by_id('counter_greater_than_10')
