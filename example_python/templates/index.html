@@ -21,18 +21,21 @@
     <button data-click="clickButton1()" id="counter_button">Add to counter</button>
     <button data-click="viewModel.counter=0" id="reset_counter_button">Reset counter</button>
     <p>counter:<span data-text="counter" id="counter"></span></p>
-    <h5 data-visible="counter > 10">Counter is greater than 10</h5>
-    <h5 data-visible="counter < 10">Counter is less than 10</h5>
+    <h5 data-visible="counter > 10" id="counter_greater_than_10">Counter is greater than 10</h5>
+    <h5 data-visible="counter < 10" id="counter_less_than_10">Counter is less than 10</h5>
 
     <label>Checkbox<input type="checkBox" data-set="checkboxValue" checked></label>
     <p>checkboxValue:<span data-text="checkboxValue"></span></p>
 
-    <label>Select<select data-set="selectValue" data-options="animals">
+    <label>Select<select id="select" data-set="selectValue" data-options="animals">
     </select></label>
 
-    <p>selectValue:<span data-text="selectValue"></span></p>
+    <p>selectValue:<span data-text="selectValue" id="selectValue"></span></p>
 </div>
+
+<h3>Children</h3>
 <button data-click="clickAddChild()" id="add_child_button">Add Child</button>
+<button data-click="clickClearChildren()" id="clear_child_button">Clear List Children</button>
 <table id="children_table">
     <thead>
     <tr>
@@ -53,8 +56,10 @@
     </tr>
     </tbody>
 </table>
+
 <h3>Other Children</h3>
 <button data-click="clickAddOtherChild()" id="add_other_child_button">Add Other Child</button>
+<button data-click="clickClearOtherChild()" id="clear_other_child_button">Add Other Child</button>
 <table id="other_children_table">
     <thead>
     <tr>
@@ -77,6 +82,7 @@
 </table>
 <h3>List Children</h3>
 <button data-click="clickAddListChild()" id="add_list_child_button">Add List Child</button>
+<button data-click="clickClearListChild()" id="clear_list_child_button">Clear List Children</button>
 
 <table id="list_children_table">
     <thead>

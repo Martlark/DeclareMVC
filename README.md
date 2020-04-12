@@ -9,7 +9,7 @@ objects.
 
 There is no support for components, extensions or complicated rendering.  Use a templating language such as 
 JINJA2 or similar for those uses.  The method for determining page updates is rather simple, any *data-click* or *data-set*
-action causes an update event.  When adding to a child list use the *addChild()* method to raise an update event.
+action causes an update event.  When adding to a child list use the *childAdd()* method to raise an update event.
 
 Supports these declarations:
 
@@ -28,7 +28,8 @@ Sets an instance property from an input element such as a INPUT, SELECT or TEXTA
 data-click
 ----------
 
-Ties an element to an instance method for doing stuff when clicked.
+Ties an element to an instance method for doing stuff when clicked.  Refreshes page elements after the click.  Return True to
+suppress refresh.
 
 data-repeat
 -----------
@@ -142,7 +143,7 @@ is populated from a REST call.
         $(document).ready(() => {
             $.ajax('/names').then(results => {
                 results.forEach(child => {
-                    this.addChild(new ChildModel(child));
+                    this.childAdd(new ChildModel(child));
                 });
             });
         });
@@ -173,4 +174,4 @@ and managing HTML elements.
 
 The HTML uses the *data-repeat* directive to create the <tr> rows of the table.  DeclareMVC will dynamically maintain the
 list from the properties of the children.  Here the entire <tr> element will be repeated.  When items are removed the 
-corresponding <tr> element will be removed as long as a *data-click* causes the removal.
+corresponding <tr> element will be removed as long as a *data-click* causes the removal, or *childrenClear()* is called.

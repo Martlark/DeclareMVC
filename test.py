@@ -79,7 +79,7 @@ class SeleniumTest(unittest.TestCase):
         input_element.clear()
         input_element.send_keys(text)
 
-    def assertDisplayed(self, item: object):
+    def assertDisplayed(self, item: object, msg=''):
         """
         assert that item is displayed.
 
@@ -87,9 +87,9 @@ class SeleniumTest(unittest.TestCase):
         """
         if type(item) == str:
             item = self.driver.find_element_by_id(item)
-        self.assertTrue(item.is_displayed(), 'Item is not displayed')
+        self.assertTrue(item.is_displayed(), f'Item is not displayed {msg}')
 
-    def assertHidden(self, item: object):
+    def assertHidden(self, item: object, msg=''):
         """
         assert that item is hidden.
 
@@ -97,7 +97,7 @@ class SeleniumTest(unittest.TestCase):
         """
         if type(item) == str:
             item = self.driver.find_element_by_id(item)
-        self.assertFalse(item.is_displayed(), 'Item is not hidden')
+        self.assertFalse(item.is_displayed(), f'Item is not hidden {msg}')
 
     @staticmethod
     def random_string(length: int = 20):
@@ -137,58 +137,39 @@ class PageIndex(SeleniumTest):
         main_content = self.driver.find_element_by_id('view-content')
         self.assertTrue(main_content)
 
-    def test_children_table(self):
+    def test_children_tables(self):
         self.load_page()
-
-        table = self.driver.find_element_by_id('children_table')
-        self.assertTrue(table)
-        table_list = table.find_elements_by_tag_name('tr')
-        tr_count = len(table_list)
-        self.assertEqual(6, tr_count)
-        self.driver.find_element_by_id(f'add_child_button').click()
-        self.assertEqual(len(table.find_elements_by_tag_name('tr')), tr_count + 1)
-        # remove one
-        buttons = table.find_elements_by_tag_name('button')
-        buttons[0].click()
-        self.assertEqual(len(table.find_elements_by_tag_name('tr')), tr_count)
-
-    def test_other_children_table(self):
-        self.load_page()
-
-        table = self.driver.find_element_by_id('other_children_table')
-        self.assertTrue(table)
-        table_list = table.find_elements_by_tag_name('tr')
-        tr_count = len(table_list)
-        self.assertEqual(6, tr_count)
-        self.driver.find_element_by_id(f'add_other_child_button').click()
-        self.assertEqual(len(table.find_elements_by_tag_name('tr')), tr_count + 1)
-        # remove one
-        buttons = table.find_elements_by_tag_name('button')
-        buttons[0].click()
-        self.assertEqual(len(table.find_elements_by_tag_name('tr')), tr_count)
-
-    def test_list_children_table(self):
-        self.load_page()
-
-        table = self.driver.find_element_by_id('list_children_table')
-        self.assertTrue(table)
-        tr_list = table.find_elements_by_css_selector('tbody tr')
-        tr_count = len(tr_list)
-        self.assertEqual(5, tr_count)
-        self.driver.find_element_by_id(f'add_list_child_button').click()
-        tr_list = table.find_elements_by_css_selector('tbody tr')
-        self.assertEqual(len(tr_list), tr_count + 1)
-        # remove one
-        buttons = table.find_elements_by_tag_name('button')
-        buttons[0].click()
-        tr_list = table.find_elements_by_css_selector('tbody tr')
-        self.assertEqual(len(tr_list), tr_count)
-        new_value = self.random_string()
-        td_name = tr_list[1].find_elements_by_tag_name('td')[2]
-        name = td_name.text
-        tr_list[1].find_elements_by_tag_name('input')[0].send_keys(new_value)
-        self.assertEqual(name+new_value, td_name.text)
-
+        for t, b, c in [('children_table', 'add_child_button', 'clear_child_button'),
+                     ('list_children_table', 'add_list_child_button', 'clear_list_child_button'),
+                     ('other_children_table', 'add_other_child_button', 'clear_other_child_button')]:
+            table = self.driver.find_element_by_id(t)
+            self.assertTrue(table, t)
+            tr_list = table.find_elements_by_css_selector('tbody tr')
+            tr_count = len(tr_list)
+            self.assertEqual(5, tr_count, t)
+            # add one
+            self.driver.find_element_by_id(b).click()
+            tr_list = table.find_elements_by_css_selector('tbody tr')
+            self.assertEqual(len(tr_list), tr_count + 1, t)
+            # remove one
+            buttons = table.find_elements_by_tag_name('button')
+            buttons[0].click()
+            tr_list = table.find_elements_by_css_selector('tbody tr')
+            self.assertEqual(len(tr_list), tr_count, t)
+            # update input
+            new_value = self.random_string()
+            td_name = tr_list[1].find_elements_by_tag_name('td')[2]
+            name = td_name.text
+            tr_list[1].find_elements_by_tag_name('input')[0].send_keys(new_value)
+            self.assertEqual(name + new_value, td_name.text, t)
+            # remove all
+            self.driver.find_element_by_id(c).click()
+            tr_list = table.find_elements_by_css_selector('tbody tr')
+            self.assertEqual(0, len(tr_list), t)
+            # add one again
+            self.driver.find_element_by_id(b).click()
+            tr_list = table.find_elements_by_css_selector('tbody tr')
+            self.assertEqual(1, len(tr_list), t)
 
     def test_input(self):
         self.load_page()
@@ -199,6 +180,39 @@ class PageIndex(SeleniumTest):
         input_input_p = self.driver.find_element_by_id('inputValue')
         self.assertEqual(v, input_input.get_attribute('value'))
         self.assertEqual(v, input_input_p.text)
+
+    def test_select(self):
+        self.load_page()
+
+        s = self.driver.find_element_by_id('select')
+        p = self.driver.find_element_by_id('selectValue')
+        self.assertEqual("feline", p.text)
+        self.assertEqual("feline", s.get_attribute("value"))
+
+    def test_counter_click(self):
+        self.load_page()
+
+        button = self.driver.find_element_by_id('counter_button')
+        p = self.driver.find_element_by_id('counter')
+        p_greater = self.driver.find_element_by_id('counter_greater_than_10')
+        p_less = self.driver.find_element_by_id('counter_less_than_10')
+        for z in range(20):
+            self.assertEqual(z, int(p.text))
+            if z < 10:
+                self.assertDisplayed(p_less, z)
+                self.assertHidden(p_greater, z)
+            if z == 10:
+                self.assertHidden(p_less, z)
+                self.assertHidden(p_greater, z)
+            if z > 10:
+                self.assertHidden(p_less, z)
+                self.assertDisplayed(p_greater, z)
+            button.click()
+
+        button = self.driver.find_element_by_id('reset_counter_button').click()
+        self.assertEqual(0, int(p.text))
+        self.assertDisplayed(p_less, 0)
+        self.assertHidden(p_greater, 0)
 
 
 class PageAbout(SeleniumTest):

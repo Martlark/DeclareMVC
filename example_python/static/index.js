@@ -28,14 +28,14 @@ class ViewModel extends DeclareMVC {
         this.listChildren = [];
         $(document).ready(() => {
             $.ajax('/names').then(results => {
-                results.forEach(child => this.addChild(new ChildModel(child)));
+                results.forEach(child => this.childAdd(new ChildModel(child)));
                 results.forEach(child => {
                     child.id += 500;
-                    this.addChild(new ChildModel(child), this.otherChildren);
+                    this.childAdd(new ChildModel(child), this.otherChildren);
                     child.id += 500;
-                    this.addChild(new ChildModel(child), this.listChildren);
+                    this.childAdd(new ChildModel(child), this.listChildren);
                 });
-            }).always(()=>{
+            }).always(() => {
                 $('#loading_finished').text('finished');
             });
         });
@@ -43,18 +43,42 @@ class ViewModel extends DeclareMVC {
 
     clickAddChild() {
         const id = Math.round(Math.random() * 100000);
-        this.addChild(new ChildModel({id: id, name: `Child ${id}`, title: 'Mrs'}));
+        this.childAdd(new ChildModel({id: id, name: `Child ${id}`, title: 'Mrs'}));
         return true;
     }
 
     clickAddListChild() {
         const id = Math.round(Math.random() * 100000);
-        this.listChildren.push(new ChildModel({id: id, name: `Added List Child ${id}`, title: 'Mrs'}));
+        this.listChildren.push(new ChildModel({
+            id: id,
+            name: `Added List Child ${id}`,
+            title: 'Mrs',
+            _parent: this,
+            _parentList: this.otherChildren
+        }));
+    }
+
+    clickClearListChild() {
+        this.childrenClear(this.listChildren);
+    }
+
+    clickClearOtherChild() {
+        this.childrenClear(this.otherChildren);
+    }
+
+    clickClearChildren() {
+        this.childrenClear();
     }
 
     clickAddOtherChild() {
         const id = Math.round(Math.random() * 100000);
-        this.otherChildren[id] = new ChildModel({id: id, name: `Added Other Child ${id}`, title: 'Mrs'});
+        this.otherChildren[id] = new ChildModel({
+            id: id,
+            name: `Added Other Child ${id}`,
+            title: 'Mrs',
+            _parent: this,
+            _parentList: this.otherChildren
+        });
     }
 
     clickButton1() {

@@ -5,17 +5,45 @@ class DeclareMVC {
         $(document).ready(() => this._start());
     }
 
-    addChild(child, childrenProp) {
+    /* public methods */
+
+    mutated() {
+        /**
+         * update elements on the page after something may have
+         * changed
+         */
+        if (this._dataRepeat()) {
+            this._dataValue();
+        }
+        this._dataText();
+        this._dataVisible();
+    }
+
+    childAdd(child, childrenProp) {
         childrenProp = childrenProp || this.children;
         child._parent = this;
         child._parentList = childrenProp;
-        if (typeof childrenProp === Array) {
+        if (Array.isArray(childrenProp)) {
             childrenProp.push(child);
         } else {
-            childrenProp[child.id] = child
+            childrenProp[child.id] = child;
         }
         this.mutated();
     }
+
+    childrenClear(childrenProp) {
+        childrenProp = childrenProp || this.children;
+        if (Array.isArray(childrenProp)) {
+            childrenProp.length = 0;
+        } else {
+            Object.keys(childrenProp).forEach(k=>{
+                delete childrenProp[k];
+            });
+        }
+        this.mutated();
+    }
+
+    /* private methods */
 
     _evalError(thing, _context) {
         try {
@@ -47,18 +75,6 @@ class DeclareMVC {
         return [_context, m]
     }
 
-    mutated() {
-        /**
-         * update elements on the page after something may have
-         * changed
-         */
-        if (this._dataRepeat()) {
-            this._dataValue();
-        }
-        this._dataText();
-        this._dataVisible();
-    }
-
     _start() {
         this._dataValue(); // set initial input type values
         this._dataSet(); // set updaters from inputs
@@ -72,7 +88,7 @@ class DeclareMVC {
          */
         $("body").on('click', "[data-click]", el => {
             const [_context, m] = this._dataGetContext(el.target, $(el.target).data('click'));
-            if(!this._evalError(m, _context))
+            if (!this._evalError(m, _context))
                 this.mutated();
         });
     }
