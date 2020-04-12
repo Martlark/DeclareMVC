@@ -12,26 +12,28 @@
 </head>
 <body>
 <h1>Title</h1>
-<h5 id="message_1" style="background-color: yellow"></h5>
+<div id="view-content">
+    <h5 id="message" style="background-color: yellow"></h5>
 
-<label>Input 1<input data-set="inputValue" value=""></label>
-<p>inputValue:<span data-text="inputValue"></span></p>
+    <label>Input 1<input data-set="inputValue" value="" id="input_input"></label>
+    <p>inputValue:<span data-text="inputValue" id="inputValue"></span></p>
 
-<button data-click="clickButton1()">Add to counter</button>
-<button data-click="viewModel.counter=0">Reset counter</button>
-<p>counter:<span data-text="counter"></span></p>
-<h5 data-visible="counter > 10">Counter is greater than 10</h5>
-<h5 data-visible="counter < 10">Counter is less than 10</h5>
+    <button data-click="clickButton1()" id="counter_button">Add to counter</button>
+    <button data-click="viewModel.counter=0" id="reset_counter_button">Reset counter</button>
+    <p>counter:<span data-text="counter" id="counter"></span></p>
+    <h5 data-visible="counter > 10">Counter is greater than 10</h5>
+    <h5 data-visible="counter < 10">Counter is less than 10</h5>
 
-<label>Checkbox<input type="checkBox" data-set="checkboxValue" checked></label>
-<p>checkboxValue:<span data-text="checkboxValue"></span></p>
+    <label>Checkbox<input type="checkBox" data-set="checkboxValue" checked></label>
+    <p>checkboxValue:<span data-text="checkboxValue"></span></p>
 
-<label>Select<select data-set="selectValue" data-options="animals">
-</select></label>
+    <label>Select<select data-set="selectValue" data-options="animals">
+    </select></label>
 
-<p>selectValue:<span data-text="selectValue"></span></p>
-<button data-click="clickAddPerson()">Add Person</button>
-<table>
+    <p>selectValue:<span data-text="selectValue"></span></p>
+</div>
+<button data-click="clickAddChild()" id="add_child_button">Add Child</button>
+<table id="children_table">
     <thead>
     <tr>
         <th>id</th>
@@ -40,17 +42,20 @@
         <th>New Name</th>
     </tr>
     </thead>
-        <tbody data-repeat="children">
-        <tr>
-            <td><button data-click="clickRemovePerson()">Remove</button><span data-text="id"></span></td>
-            <td data-text="title"></td>
-            <td data-text="name"></td>
-            <td><input data-set="name"></td>
-        </tr>
+    <tbody data-repeat="children">
+    <tr>
+        <td>
+            <button data-click="clickRemoveChild()">Remove</button>
+            <span data-text="id"></span></td>
+        <td data-text="title"></td>
+        <td data-text="name"></td>
+        <td><input data-set="name"></td>
+    </tr>
     </tbody>
 </table>
 <h3>Other Children</h3>
-<table>
+<button data-click="clickAddOtherChild()" id="add_other_child_button">Add Other Child</button>
+<table id="other_children_table">
     <thead>
     <tr>
         <th>id</th>
@@ -59,19 +64,21 @@
         <th>New Name</th>
     </tr>
     </thead>
-        <tbody data-repeat="otherChildren">
-        <tr>
-            <td><button data-click="clickRemovePerson()">Remove</button><span data-text="id"></span></td>
-            <td data-text="title"></td>
-            <td data-text="name"></td>
-            <td><input data-set="name"></td>
-        </tr>
+    <tbody data-repeat="otherChildren">
+    <tr>
+        <td>
+            <button data-click="clickRemoveChild()">Remove</button>
+            <span data-text="id"></span></td>
+        <td data-text="title"></td>
+        <td data-text="name"></td>
+        <td><input data-set="name"></td>
+    </tr>
     </tbody>
 </table>
 <h3>List Children</h3>
-<button data-click="clickAddListPerson()">Add List Child</button>
+<button data-click="clickAddListChild()" id="add_list_child_button">Add List Child</button>
 
-<table>
+<table id="list_children_table">
     <thead>
     <tr>
         <th>id</th>
@@ -80,14 +87,17 @@
         <th>New Name</th>
     </tr>
     </thead>
-        <tbody data-repeat="listChildren">
-        <tr>
-            <td><button data-click="clickRemoveListPerson()">Remove</button><span data-text="id"></span></td>
-            <td data-text="title"></td>
-            <td data-text="name"></td>
-            <td><input data-set="name"></td>
-        </tr>
+    <tbody data-repeat="listChildren">
+    <tr>
+        <td>
+            <button data-click="clickRemoveListChild()">Remove</button>
+            <span data-text="id"></span></td>
+        <td data-text="title"></td>
+        <td data-text="name"></td>
+        <td><input data-set="name"></td>
+    </tr>
     </tbody>
 </table>
+<p id="loading_finished"></p>
 </body>
 </html>

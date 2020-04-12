@@ -9,7 +9,7 @@ class DeclareMVC {
         childrenProp = childrenProp || this.children;
         child._parent = this;
         child._parentList = childrenProp;
-        if (typeof childrenProp == Array) {
+        if (typeof childrenProp === Array) {
             childrenProp.push(child);
         } else {
             childrenProp[child.id] = child

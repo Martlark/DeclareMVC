@@ -1,4 +1,4 @@
-class PersonModel {
+class ChildModel {
     constructor(props) {
         this.id = props.id;
         this.title = props.title;
@@ -7,11 +7,11 @@ class PersonModel {
         this._parent = props._parent;
     }
 
-    clickRemovePerson() {
+    clickRemoveChild() {
         delete this._parentList[this.id];
     }
 
-    clickRemoveListPerson() {
+    clickRemoveListChild() {
         this._parent.listChildren = this._parent.listChildren.filter(p => p.id !== this.id);
     }
 }
@@ -28,26 +28,33 @@ class ViewModel extends DeclareMVC {
         this.listChildren = [];
         $(document).ready(() => {
             $.ajax('/names').then(results => {
-                results.forEach(child => this.addChild(new PersonModel(child)));
+                results.forEach(child => this.addChild(new ChildModel(child)));
                 results.forEach(child => {
                     child.id += 500;
-                    this.addChild(new PersonModel(child), this.otherChildren);
+                    this.addChild(new ChildModel(child), this.otherChildren);
                     child.id += 500;
-                    this.addChild(new PersonModel(child), this.listChildren);
+                    this.addChild(new ChildModel(child), this.listChildren);
                 });
+            }).always(()=>{
+                $('#loading_finished').text('finished');
             });
         });
     }
 
-    clickAddPerson() {
+    clickAddChild() {
         const id = Math.round(Math.random() * 100000);
-        this.addChild(new PersonModel({id: id, name: `Person ${id}`, title: 'Mrs'}));
+        this.addChild(new ChildModel({id: id, name: `Child ${id}`, title: 'Mrs'}));
         return true;
     }
 
-    clickAddListPerson() {
+    clickAddListChild() {
         const id = Math.round(Math.random() * 100000);
-        this.listChildren.push(new PersonModel({id: id, name: `Added Person ${id}`, title: 'Mrs'}));
+        this.listChildren.push(new ChildModel({id: id, name: `Added List Child ${id}`, title: 'Mrs'}));
+    }
+
+    clickAddOtherChild() {
+        const id = Math.round(Math.random() * 100000);
+        this.otherChildren[id] = new ChildModel({id: id, name: `Added Other Child ${id}`, title: 'Mrs'});
     }
 
     clickButton1() {

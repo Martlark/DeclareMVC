@@ -142,7 +142,7 @@ is populated from a REST call.
         $(document).ready(() => {
             $.ajax('/names').then(results => {
                 results.forEach(child => {
-                    this.addChild(new PersonModel(child));
+                    this.addChild(new ChildModel(child));
                 });
             });
         });
@@ -163,7 +163,7 @@ and managing HTML elements.
         </thead>
             <tbody data-repeat="children">
             <tr>
-                <td><button data-click="clickRemovePerson()">Remove</button><span data-text="id"></span></td>
+                <td><button data-click="clickRemoveChild()">Remove</button><span data-text="id"></span></td>
                 <td data-text="title"></td>
                 <td data-text="name"></td>
                 <td><input data-set="name"></td>
