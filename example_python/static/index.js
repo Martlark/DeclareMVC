@@ -37,12 +37,12 @@ class ViewModel extends DeclareMVC {
 
         $(document).ready(() => {
             $.ajax('/names').then(results => {
-                results.forEach(child => this.childAdd(new ChildModel(child)));
+                this.childrenAdd(results.map(r=>new ChildModel(r)));
                 results.forEach(child => {
                     child.id += 500;
-                    this.childAdd(new ChildModel(child), this.otherChildren);
+                    this.childrenAdd(new ChildModel(child), this.otherChildren);
                     child.id += 500;
-                    this.childAdd(new ChildModel(child), this.listChildren);
+                    this.childrenAdd(new ChildModel(child), this.listChildren);
                 });
             }).always(() => {
                 $('#loading_finished').text('finished');
@@ -66,7 +66,7 @@ class ViewModel extends DeclareMVC {
 
     clickAddChild() {
         const id = Math.round(Math.random() * 100000);
-        this.childAdd(new ChildModel({id: id, name: `Child ${id}`, title: 'Mrs'}));
+        this.childrenAdd(new ChildModel({id: id, name: `Child ${id}`, title: 'Mrs'}));
         return true;
     }
 

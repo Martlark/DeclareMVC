@@ -9,7 +9,7 @@ objects.
 
 There is no support for components, extensions or complicated rendering.  Use a templating language such as 
 JINJA2 or similar for those uses.  The method for determining page updates is rather simple, any *data-click* or *data-set*
-action causes an update event.  When adding to a child list use the *childAdd()* method to raise an update event.
+action causes an update event.  When adding to a child list use the *childrenAdd()* method to raise an update event.
 
 Supports these declarations:
 
@@ -19,38 +19,7 @@ Supports these declarations:
 * data-text
 * data-visible
 * data-options
-
-data-set
---------
-
-Sets an instance property from an input element such as a INPUT, SELECT or TEXTAREA.
-
-data-click
-----------
-
-Ties an element to an instance method for doing stuff when clicked.  Refreshes page elements after the click.  Return True to
-suppress refresh.
-
-data-repeat
------------
-
-Repeats HTML element for each item in a child property.
-
-data-text
----------
-
-Sets the text value of a HTML element from an instance property or method.
-
-data-visible
-------------
-
-Shows or hides an HTML element based upon the value of an instance property or method.
-
-data-options
-------------
-
-Provide the options for a SELECT input.  Must return a list of options.  This can either be a simple list of values or a 
-list of Objects, with this format: {value: "a", label: "The letter A"}.
+* data-attr
 
 Example:
 ========
@@ -143,7 +112,7 @@ is populated from a REST call.
         $(document).ready(() => {
             $.ajax('/names').then(results => {
                 results.forEach(child => {
-                    this.childAdd(new ChildModel(child));
+                    this.childrenAdd(new ChildModel(child));
                 });
             });
         });
@@ -175,3 +144,137 @@ and managing HTML elements.
 The HTML uses the *data-repeat* directive to create the <tr> rows of the table.  DeclareMVC will dynamically maintain the
 list from the properties of the children.  Here the entire <tr> element will be repeated.  When items are removed the 
 corresponding <tr> element will be removed as long as a *data-click* causes the removal, or *childrenClear()* is called.
+
+Details
+=======
+
+data-set
+--------
+
+Sets an instance property from an input element such as a INPUT, SELECT or TEXTAREA.  Example:
+
+JavaScript model:
+
+    class Address {
+        constructor(){
+            this.phone='';
+        }
+    }
+    
+HTML:
+
+    <label>Phone number: <input type="number" data-set="phone"></label>
+
+data-click
+----------
+
+Ties an element to an instance method for doing stuff when clicked.  Refreshes page elements after the click.  Return True to
+suppress refresh.  Example:
+
+JavaScript model:
+
+    class ViewModel extends DeclareMVC {
+        constructor(){
+            ....
+        }
+        showAlert(){
+            alert('hello');
+        }
+    }
+    
+HTML:
+
+    <button data-click="showAlert()">Show Alert</button>
+
+
+data-repeat
+-----------
+
+Repeats HTML element for each item in a child property.  Example:
+
+JavaScript model:
+
+    class ChildModel {
+        constructor(id){
+            this.id = id;
+        }
+
+    class ViewModel {
+        constructor(){
+        }
+        
+        for(let x=0; x < 3; x++){
+            this.childrenAdd( new ChildModel(x) )
+        }
+    }
+    
+HTML:
+
+    <table data-repeat="children">
+        <tr><td data-text="id"></td></tr>
+    </table>
+
+RESULTANT HTML:
+
+    <table data-repeat="children">
+        <tr data-child-id="0"><td data-text="id">0</td></tr>
+        <tr data-child-id="1"><td data-text="id">1</td></tr>
+        <tr data-child-id="2"><td data-text="id">2</td></tr>
+    </table>
+
+As you can see *data-child-id* is added to each repeated element.  This is required to keep track of additions,
+removals and context.  A unique *id* is **required** on each child Class instance.  The *childrenAdd* method is used
+to add a child Class instance to the default *children* property.  This method causes the page to refresh after adding.
+
+data-text
+---------
+
+Sets the text value of a HTML element from an instance property or method. Example:
+
+JavaScript model:
+
+    class ExampleModel {
+        constructor(){
+            this.phone='';
+        }
+        
+        phoneNumberLength(){
+            return this.phone.length;
+        }
+    }
+    
+HTML
+
+    <h3 data-text="phone"></h3>
+    <h3 data-text="phoneNumberLength()"></h3>
+
+
+
+data-visible
+------------
+
+Shows or hides an HTML element based upon the value of an instance property or method. Example:
+
+JavaScript model:
+
+    class ExampleModel {
+        constructor(){
+            this.phone='';
+        }
+        
+        phoneNumberLength(){
+            return this.phone.length;
+        }
+    }
+    
+HTML
+
+    <label>Phone number: <input data-set="phone"></label>
+    <p data-visible="phoneNumberLength()==0">Phone number is required</p>
+    <p data-visible="phone.length==0">Phone number is still required</p>
+
+data-options
+------------
+
+Provide the options for a SELECT input.  Must return a list of options.  This can either be a simple list of values or a 
+list of Objects, with this format: {value: "a", label: "The letter A"}.

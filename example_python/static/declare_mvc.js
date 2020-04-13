@@ -1,17 +1,29 @@
+/*
+DeclareMVC a minimal declartive model view controller JavaScript HTML framework
+Copyright (c) 2020 Andrew Rowe
+rowe.andrew.d@gmail.com
+
+version history
+---------------
+14-Apr-2020 1.0.0
+ */
+
+
 class DeclareMVC {
     constructor(props) {
         this.children = {};
+        this._version = '1.0.0';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
 
-    /* public methods */
+    /* ===== public methods ===== */
 
+    /**
+     * update elements on the page after something may have
+     * changed
+     */
     mutated() {
-        /**
-         * update elements on the page after something may have
-         * changed
-         */
         if (this._dataRepeat()) {
             this._dataValue();
         }
@@ -19,18 +31,36 @@ class DeclareMVC {
         this._dataVisible();
     }
 
-    childAdd(child, childrenProp) {
+    /***
+     * Add a child or children to a model list property
+     *
+     * @param child: a single child or a list of children to add
+     * @param childrenProp: (optional, defaults to children) the property to add the children to.
+     */
+    childrenAdd(child, childrenProp) {
         childrenProp = childrenProp || this.children;
-        child._parent = this;
-        child._parentList = childrenProp;
-        if (Array.isArray(childrenProp)) {
-            childrenProp.push(child);
-        } else {
-            childrenProp[child.id] = child;
+        let children = child;
+        if (!Array.isArray(child)) {
+            children = [child];
         }
+        children.forEach(child => {
+            child._parent = this;
+            child._parentList = childrenProp;
+            if (Array.isArray(childrenProp)) {
+                childrenProp.push(child);
+            } else {
+                childrenProp[child.id] = child;
+            }
+        });
         this.mutated();
     }
 
+    /***
+     * remove all items from a child list property
+     * and then refresh the page
+     *
+     * @param childrenProp
+     */
     childrenClear(childrenProp) {
         childrenProp = childrenProp || this.children;
         if (Array.isArray(childrenProp)) {
@@ -82,14 +112,15 @@ class DeclareMVC {
         this.mutated();
     }
 
+    /**
+     * add handles for a click event.
+     */
     _dataClick() {
-        /**
-         * add handles for a click event.
-         */
         $("body").on('click', "[data-click]", el => {
             const [_context, m] = this._dataGetContext(el.target, $(el.target).data('click'));
-            if (!this._evalError(m, _context))
+            if (!this._evalError(m, _context)) {
                 this.mutated();
+            }
         });
     }
 
@@ -137,9 +168,7 @@ class DeclareMVC {
             // add any new
             keys.forEach(k => {
                 if (currentKeys.indexOf(k.toString()) === -1) {
-                    const element = $(state.html);
-                    element.attr('data-child-id', k);
-                    $el.append(element);
+                    $el.append($(state.html).attr('data-child-id', k));
                     hasMutated = true;
                 }
             });
