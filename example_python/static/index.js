@@ -27,7 +27,7 @@ class ViewModel extends DeclareMVC {
         this.num = 20;
         this.inputValue = '';
         this.checkboxValue = false;
-        this.selectValue = 'feline';
+        this.select_value = 'feline';
         this.funcValue = '';
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};

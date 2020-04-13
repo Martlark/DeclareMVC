@@ -179,19 +179,34 @@ class PageIndex(SeleniumTest):
         self.assertEqual(v, input_input.get_attribute('value'))
         self.assertEqual(v, input_input_p.text)
 
+    def test_function(self):
+        input_input = self.driver.find_element_by_id('function_input')
+        v = self.random_string()
+        self.set_text('function_input', v)
+        p = self.driver.find_element_by_id('function_value')
+        self.assertEqual(v, input_input.get_attribute('value'))
+        self.assertEqual(v.upper(), p.text)
+
     def test_attr(self):
         s = self.driver.find_element_by_id('title')
         self.assertEqual('background: yellow;', s.get_attribute('style'))
 
     def test_select(self):
         s = self.driver.find_element_by_id('select')
-        p = self.driver.find_element_by_id('selectValue')
+        p = self.driver.find_element_by_id('select_value')
         self.assertEqual("feline", p.text)
         self.assertEqual("feline", s.get_attribute("value"))
         for opt in [{'value': 'dog', 'label': 'Dog'}, {'value': 'feline', 'label': 'Cat'}]:
             o = s.find_elements_by_css_selector(f"option[value={opt['value']}")[0]
             o.click()
             self.assertEqual(opt['value'], p.text)
+
+    def test_checkbox(self):
+        s = self.driver.find_element_by_id('checkbox_input')
+        p = self.driver.find_element_by_id('checkbox_value')
+        self.assertEqual("true", p.text)
+        s.click()
+        self.assertEqual("false", p.text)
 
     def test_counter_click(self):
         button = self.driver.find_element_by_id('counter_add_button')

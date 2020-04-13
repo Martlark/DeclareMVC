@@ -15,24 +15,33 @@
     <script src="static/index.js"></script>
 </head>
 <body>
-<h1 data-text="title" data-attr="titleAttributes" id="title">Title</h1>
-<button data-click="clickTitleNextColor()" title="Cycle title color">*</button>
+<h1 data-text="title">Title</h1>
 
 <div class="container" id="view-content">
     <h5 id="message" style="background-color: yellow"></h5>
     <table class="table">
         <thead>
         <tr>
-            <th>Label</th>
+            <th></th>
             <th>Input</th>
             <th>Value</th>
+            <th>Demonstrates</th>
         </tr>
         </thead>
         <tbody>
         <tr>
+            <td>
+                <button data-click="clickTitleNextColor()" title="Cycle title color">Next color</button>
+            </td>
+            <td><span data-text="viewModel.titleColors[viewModel.titleAttrIndex]"></span></td>
+            <td><span data-attr="titleAttributes" id="title">Color</span></td>
+            <td>data-attr</td>
+        </tr>
+        <tr>
             <td><label for="input_input">inputValue</label></td>
             <td><input data-set="inputValue" value="" id="input_input"></td>
             <td><span data-text="inputValue" id="inputValue"></span></td>
+            <td>data-set, data-text</td>
         </tr>
         <tr>
             <td>
@@ -43,6 +52,7 @@
                 <button data-click="viewModel.counter=0" id="counter_reset_button">Reset counter</button>
             </td>
             <td><span data-text="counter" id="counter"></span></td>
+            <td>data-visible</td>
         </tr>
         <tr>
             <td></td>
@@ -56,22 +66,30 @@
             <td><label for="checkbox_input">Checkbox</label></td>
             <td><input type="checkBox" data-set="checkboxValue" checked id="checkbox_input"></td>
             <td><span data-text="checkboxValue" id="checkbox_value"></span></td>
+            <td>checkbox</td>
+
         </tr>
         <tr>
             <td><label for="select">Select</label></td>
-            <td><select id="select" data-set="selectValue" data-options="animals">
+            <td><select id="select" data-set="select_value" data-options="animals">
             </select></td>
-            <td><span data-text="selectValue" id="selectValue"></span></td>
+            <td><span data-text="select_value" id="select_value"></span></td>
+            <td>data-options</td>
+
         </tr>
         <tr>
-            <td><label for="num-input">Number set</label></td>
-            <td><input type="number" data-set="num" id="num-input"></td>
-            <td><p data-text="num" id="num-p"></p></td>
+            <td><label for="num_input">Number set</label></td>
+            <td><input type="number" data-set="num" id="num_input"></td>
+            <td><p data-text="num" id="num_value"></p></td>
+            <td>data-set maintaining property type</td>
+
         </tr>
         <tr>
-            <td><label for="function-input">Function set</label></td>
-            <td><input data-set="func" id="function-input"></td>
-            <td><p data-text="func()" id="function-p"></p></td>
+            <td><label for="function_input">Function set</label></td>
+            <td><input data-set="func" id="function_input"></td>
+            <td><p data-text="func()" id="function_value"></p></td>
+            <td>data-set, data-text using functions</td>
+
         </tr>
         </tbody>
     </table>
@@ -81,7 +99,7 @@
 <div class="container">
     <h3>Children</h3>
     <button data-click="clickAddChild()" id="add_child_button">Add Child</button>
-    <button data-click="clickClearChildren()" id="clear_child_button">Clear List Children</button>
+    <button data-click="clickClearChildren()" id="clear_child_button">Clear children</button>
     <table id="children_table" class="table">
         <thead>
         <tr>
@@ -106,7 +124,7 @@
 <div class="container">
     <h3>Other Children</h3>
     <button data-click="clickAddOtherChild()" id="add_other_child_button">Add Other Child</button>
-    <button data-click="clickClearOtherChild()" id="clear_other_child_button">Add Other Child</button>
+    <button data-click="clickClearOtherChild()" id="clear_other_child_button">Clear Other Child</button>
     <table id="other_children_table" class="table">
         <thead>
         <tr>
