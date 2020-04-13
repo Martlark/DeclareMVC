@@ -152,7 +152,7 @@ class DeclareMVC {
         $("[data-text]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'));
             let text = this._evalError(m, _context);
-            if(typeof text == "undefined")
+            if (typeof text == "undefined")
                 text = '';
             else
                 text = text.toString();
@@ -214,8 +214,8 @@ class DeclareMVC {
             if (tagType === 'checkbox') {
                 v = $(el).is(':checked');
                 setter = `${m}=${v}`
-            }else{
-                switch(typeof eval(m)){
+            } else {
+                switch (typeof eval(m)) {
                     case "function":
                         setter = `${m}("${v}")`;
                         break;
