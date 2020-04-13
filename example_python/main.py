@@ -1,8 +1,9 @@
 import os
 import random
 
-from flask import Flask, render_template, jsonify, request, current_app
+from flask import Flask, render_template, jsonify, request, current_app, send_from_directory
 
+CDN_FOLDER = '..'
 app = Flask(__name__)
 
 
@@ -16,10 +17,10 @@ def api_names():
     return jsonify([dict(id=x + 1, name=f'Name {1 + x}', title='Mr') for x in range(5)])
 
 
-
 @app.route('/about')
 def public_about():
     return render_template("about.html", title="DeclareMVC Example and Testing application")
+
 
 @app.route('/shutdown')
 def testing_shutdown():
@@ -31,13 +32,19 @@ def testing_shutdown():
         return 'shutdown'
     return 'not testing'
 
+
+@app.route('/cdn/<file_name>')
+def cdn_serve(file_name):
+    return send_from_directory( CDN_FOLDER, os.path.basename(file_name))
+
+
 rand_check_number = random.randint(0, 9999999999)
 
 
 @app.route('/last_static_update')
 def last_static_update():
-    include_dirs = ['./static', './templates']
-    exclude_dir = ['node_modules', 'stock', 'tmp', 'user_images']
+    include_dirs = [CDN_FOLDER, './static', './templates']
+    exclude_dir = ['node_modules', 'venv', 'tmp']
     notice_exts = ['js', 'html', 'css', 'jsx']
     initial_max_age = max_age = float(request.args.get('max_age', -1))
     for include_dir in include_dirs:
@@ -57,4 +64,3 @@ def last_static_update():
             current_app.logger.debug(
                 'Refresh required because of:rand_check_number')
     return jsonify(dict(max_age=max_age, rand_check_number=rand_check_number))
-
