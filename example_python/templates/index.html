@@ -35,13 +35,19 @@
             </td>
             <td><span data-text="viewModel.titleColors[viewModel.titleAttrIndex]"></span></td>
             <td><span data-attr="titleAttributes" id="title">Color</span></td>
-            <td>data-attr</td>
+            <td><b>data-attr</b></td>
         </tr>
         <tr>
             <td><label for="input_input">inputValue</label></td>
             <td><input data-set="inputValue" value="" id="input_input"></td>
             <td><span data-text="inputValue" id="inputValue"></span></td>
-            <td>data-set, data-text</td>
+            <td><b>data-set</b>, <b>data-text</b></td>
+        </tr>
+        <tr>
+            <td><label for="textarea">textarea</label></td>
+            <td><textarea data-set="textarea_value" id="textarea"></textarea></td>
+            <td><span data-text="textarea_value" id="textarea_value"></span></td>
+            <td>textarea with <b>data-set</b>, <b>data-text</b></td>
         </tr>
         <tr>
             <td>
@@ -52,7 +58,7 @@
                 <button data-click="viewModel.counter=0" id="counter_reset_button">Reset counter</button>
             </td>
             <td><span data-text="counter" id="counter"></span></td>
-            <td>data-visible</td>
+            <td><b>data-visible</b></td>
         </tr>
         <tr>
             <td></td>
@@ -74,21 +80,21 @@
             <td><select id="select" data-set="select_value" data-options="animals">
             </select></td>
             <td><span data-text="select_value" id="select_value"></span></td>
-            <td>data-options</td>
+            <td>select with <b>data-options</b></td>
 
         </tr>
         <tr>
             <td><label for="num_input">Number set</label></td>
             <td><input type="number" data-set="num" id="num_input"></td>
             <td><p data-text="num" id="num_value"></p></td>
-            <td>data-set maintaining property type</td>
+            <td><b>data-set</b> maintaining property type</td>
 
         </tr>
         <tr>
             <td><label for="function_input">Function set</label></td>
             <td><input data-set="func" id="function_input"></td>
             <td><p data-text="func()" id="function_value"></p></td>
-            <td>data-set, data-text using functions</td>
+            <td><b>data-set</b>, <b>data-text</b> using functions</td>
 
         </tr>
         </tbody>

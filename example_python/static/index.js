@@ -26,6 +26,7 @@ class ViewModel extends DeclareMVC {
         this.counter = 0;
         this.num = 20;
         this.inputValue = '';
+        this.text_area = '';
         this.checkboxValue = false;
         this.select_value = 'feline';
         this.funcValue = '';

@@ -47,11 +47,11 @@ class DeclareMVC {
 
     _evalError(thing, _context) {
         try {
-            return eval(thing);
+            return eval(thing.replace(/\n/g, "\\n"));
         } catch (e) {
             console.error(e, thing);
         }
-        return null;
+        return '';
     }
 
     _dataGetContext(el, m) {
@@ -151,7 +151,11 @@ class DeclareMVC {
     _dataText() {
         $("[data-text]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'));
-            let text = this._evalError(m, _context).toString();
+            let text = this._evalError(m, _context);
+            if(typeof text == "undefined")
+                text = '';
+            else
+                text = text.toString();
             const el_text = $(el).text();
             if (text !== el_text) {
                 $(el).text(text);
@@ -203,7 +207,7 @@ class DeclareMVC {
         const set = (el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('set'));
             let v = $(el).val() || '';
-            v = v.replace(/"/g, '\\"');
+            v = v.replace(/["\\]/g, '');
             let setter = `${m}="${v}"`;
             const tagName = $(el)[0].tagName;
             const tagType = $(el)[0].type;
