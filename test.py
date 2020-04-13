@@ -182,10 +182,16 @@ class PageIndex(SeleniumTest):
     def test_textarea(self):
         input_input = self.driver.find_element_by_id('textarea')
         v = self.random_string()
+        v2 = self.random_string()
         self.set_text('textarea', v)
-        input_input_p = self.driver.find_element_by_id('textarea_value')
+        p = self.driver.find_element_by_id('textarea_value')
         self.assertEqual(v, input_input.get_attribute('value'))
-        self.assertEqual(v, input_input_p.text)
+        self.assertEqual(v, p.text)
+        # new line
+        input_input.send_keys('textarea', webdriver.common.keys.Keys.ENTER)
+        input_input.send_keys('textarea', v2)
+        self.assertTrue(v in p.text)
+        self.assertTrue(v2 in p.text)
 
     def test_function(self):
         input_input = self.driver.find_element_by_id('function_input')
