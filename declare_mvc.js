@@ -6,14 +6,15 @@ rowe.andrew.d@gmail.com
 version history
 ---------------
 14-Apr-2020 1.0.0
-14-Apr-2020 1.0.1
+14-Apr-2020 1.0.1 - improve error messages
+14-Apr-2020 1.0.2 - improve error handling
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.0.1';
+        this._version = '1.0.2';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -93,8 +94,9 @@ class DeclareMVC {
         if (prop) {
             _context = this[prop][Number(id)] || this;
         }
-        if( !m){
-            throw `no method in [${dataElement}] for element: ${el}: ${el.innerText}`;
+        if (!m) {
+            console.log(`no method in [${dataElement}] for element: ${el}: ${el.innerText}`);
+            return [null, null];
         }
         const leftPart = m.toString().split('(')[0];
         if (!isNaN(m) || leftPart.includes('.') || m.includes('&&') || m.includes('||')) {
@@ -121,9 +123,16 @@ class DeclareMVC {
      */
     _dataClick() {
         $("body").on('click', "[data-click]", el => {
-            const [_context, m] = this._dataGetContext(el.target, $(el.target).data('click'), 'data-click');
-            if (!this._evalError(m, _context)) {
-                this.mutated();
+            let target = el.target, attempts=10, click = $(el).data('click');
+            while(!click && --attempts > 0){
+                target = $(target).parent();
+                click = $(target).data('click');
+            }
+            const [_context, m] = this._dataGetContext(el.target, click, 'data-click');
+            if (_context && m) {
+                if (!this._evalError(m, _context)) {
+                    this.mutated();
+                }
             }
         });
     }
@@ -131,12 +140,14 @@ class DeclareMVC {
     _dataVisible() {
         $("[data-visible]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('visible'), 'data-visible');
-            const newState = this._evalError(m, _context);
-            if (newState !== $(el).is(':visible')) {
-                if (newState) {
-                    $(el).show();
-                } else {
-                    $(el).hide();
+            if (_context && m) {
+                const newState = this._evalError(m, _context);
+                if (newState !== $(el).is(':visible')) {
+                    if (newState) {
+                        $(el).show();
+                    } else {
+                        $(el).hide();
+                    }
                 }
             }
         });
@@ -157,6 +168,9 @@ class DeclareMVC {
                 state = JSON.parse((state));
             }
             const [_context, m] = this._dataGetContext(el, $el.data('repeat'), 'data-repeat');
+            if (!(_context && m)) {
+                return;
+            }
             const keys = Object.keys(eval(m));
             const currentKeys = [];
             $('[data-child-id]', el).each((index, item) => {
@@ -184,25 +198,29 @@ class DeclareMVC {
     _dataText() {
         $("[data-text]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'), 'data-text');
-            let text = this._evalError(m, _context);
-            if (typeof text == "undefined")
-                text = '';
-            else
-                text = text.toString();
-            const el_text = $(el).text();
-            if (text !== el_text) {
-                $(el).text(text);
+            if (_context && m) {
+                let text = this._evalError(m, _context);
+                if (typeof text == "undefined")
+                    text = '';
+                else
+                    text = text.toString();
+                const el_text = $(el).text();
+                if (text !== el_text) {
+                    $(el).text(text);
+                }
             }
         });
         $("[data-attr]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('attr'), 'data-atrr');
-            let props = this._evalError(m, _context);
-            Object.keys(props).forEach(k => {
-                const el_text = $(el).attr(k) || '';
-                if (props[k] !== el_text) {
-                    $(el).attr(k, props[k]);
-                }
-            });
+            if (_context && m) {
+                let props = this._evalError(m, _context);
+                Object.keys(props).forEach(k => {
+                    const el_text = $(el).attr(k) || '';
+                    if (props[k] !== el_text) {
+                        $(el).attr(k, props[k]);
+                    }
+                });
+            }
         });
     }
 
@@ -214,6 +232,9 @@ class DeclareMVC {
          */
         $("[data-options]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('options'), 'data-options');
+            if (!(_context && m)) {
+                return;
+            }
             const options = this._evalError(m, _context) || [];
             $(el).html(null);
             options.forEach(opt => {
@@ -238,7 +259,10 @@ class DeclareMVC {
          * set a prop of an object instance from an input type
          */
         const set = (el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('set'),'data-set');
+            const [_context, m] = this._dataGetContext(el, $(el).data('set'), 'data-set');
+            if (!(_context && m)) {
+                return;
+            }
             let v = $(el).val() || '';
             v = v.replace(/["\\]/g, '');
             let setter = `${m}="${v}"`;
