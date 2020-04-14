@@ -1,5 +1,6 @@
 import os
 import random
+import time
 
 from flask import Flask, render_template, jsonify, request, current_app, send_from_directory
 
@@ -35,7 +36,13 @@ def testing_shutdown():
 
 @app.route('/cdn/<file_name>')
 def cdn_serve(file_name):
-    return send_from_directory( CDN_FOLDER, os.path.basename(file_name))
+    return send_from_directory(CDN_FOLDER, os.path.basename(file_name))
+
+
+@app.route('/ajax/<int:value>')
+def route_ajax(value):
+    time.sleep(0.2)
+    return str(value * 2)
 
 
 rand_check_number = random.randint(0, 9999999999)

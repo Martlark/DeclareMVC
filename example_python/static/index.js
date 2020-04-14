@@ -29,7 +29,9 @@ class ViewModel extends DeclareMVC {
         this.text_area = '';
         this.checkboxValue = false;
         this.select_value = 'feline';
+        this.ajax_value = '';
         this.funcValue = '';
+        this.number_to_double = 1;
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
         this.listChildren = [];
@@ -48,6 +50,10 @@ class ViewModel extends DeclareMVC {
                 $('#loading_finished').text('finished');
             });
         });
+    }
+
+    clickAjax(){
+        return $.ajax(`/ajax/${this.number_to_double}`).then(result=>this.ajax_value=result);
     }
 
     func(newValue) {
