@@ -6,13 +6,14 @@ rowe.andrew.d@gmail.com
 version history
 ---------------
 14-Apr-2020 1.0.0
+14-Apr-2020 1.0.1
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.0.0';
+        this._version = '1.0.1';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -90,7 +91,7 @@ class DeclareMVC {
         let _context = this.children[Number(id)] || this;
 
         if (prop) {
-            _context = eval(`this.${prop}[Number(id)]`) || this;
+            _context = this[prop][Number(id)] || this;
         }
         if( !m){
             throw `no method in [${dataElement}] for element: ${el}: ${el.innerText}`;
