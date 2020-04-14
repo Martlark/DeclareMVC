@@ -337,7 +337,8 @@ Updates the page if you alter properties not using *data-click*, *data-repeat*, 
     childrenAdd(child, childrenProp)
 
 Add a child class instance to a view controller property.  By default uses the builtin *children* object.  
-Pass a **childrenProp** parameter to use another property.  Supports objects and lists.
+Pass a **childrenProp** parameter to use another property.  Lists of children is maintained using the 
+child ids as key to properties of an object.
 
     /***
      * remove all items from a child list property
