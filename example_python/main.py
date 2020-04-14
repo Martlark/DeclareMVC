@@ -42,6 +42,8 @@ def cdn_serve(file_name):
 @app.route('/ajax/<int:value>')
 def route_ajax(value):
     time.sleep(0.2)
+    if value == 5:
+        raise Exception('5 is a bad number')
     return str(value * 2)
 
 

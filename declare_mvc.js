@@ -9,13 +9,14 @@ version history
 14-Apr-2020 1.0.1 - improve error messages
 14-Apr-2020 1.0.2 - improve error handling
 14-Apr-2020 1.0.3 - use promise resolve after click
+14-Apr-2020 1.0.4 - trap promise errors
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.0.3';
+        this._version = '1.0.4';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -133,7 +134,7 @@ class DeclareMVC {
             const [_context, m] = this._dataGetContext(el.target, click, 'data-click');
             if (_context && m) {
                 const value = this._evalError(m, _context);
-                Promise.resolve(value).then(() => {
+                const res = () => {
                     this.mutated();
                     let intervals = 5;
                     const interval = setInterval(() => {
@@ -143,7 +144,8 @@ class DeclareMVC {
                             clearInterval(interval);
                         }
                     }, 50);
-                });
+                }
+                Promise.resolve(value).then(()=>res()).catch(() => res());
             }
         });
     }

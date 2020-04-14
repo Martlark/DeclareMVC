@@ -53,7 +53,9 @@ class ViewModel extends DeclareMVC {
     }
 
     clickAjax(){
-        return $.ajax(`/ajax/${this.number_to_double}`).then(result=>this.ajax_value=result);
+        return $.ajax(`/ajax/${this.number_to_double}`).then(result=>this.ajax_value=result).fail((xhr, textStatus, errorThrown) =>
+            this.ajax_value =`${textStatus}`
+        );
     }
 
     func(newValue) {
