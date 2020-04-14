@@ -123,7 +123,8 @@ class DeclareMVC {
      */
     _dataClick() {
         $("body").on('click', "[data-click]", el => {
-            let target = el.target, attempts = 10, click = $(el).data('click');
+            let target = el.target, attempts = 10;
+            let click = $(target).data('click');
             while (!click && --attempts > 0) {
                 target = $(target).parent();
                 click = $(target).data('click');
