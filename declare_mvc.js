@@ -10,13 +10,14 @@ version history
 14-Apr-2020 1.0.2 - improve error handling
 14-Apr-2020 1.0.3 - use promise resolve after click
 14-Apr-2020 1.0.4 - trap promise errors
+14-Apr-2020 1.0.5 - remove data-repeat list support
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.0.4';
+        this._version = '1.0.5';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -50,11 +51,7 @@ class DeclareMVC {
         children.forEach(child => {
             child._parent = this;
             child._parentList = childrenProp;
-            if (Array.isArray(childrenProp)) {
-                childrenProp.push(child);
-            } else {
-                childrenProp[child.id] = child;
-            }
+            childrenProp[child.id] = child;
         });
         this.mutated();
     }
@@ -67,13 +64,20 @@ class DeclareMVC {
      */
     childrenClear(childrenProp) {
         childrenProp = childrenProp || this.children;
-        if (Array.isArray(childrenProp)) {
-            childrenProp.length = 0;
-        } else {
-            Object.keys(childrenProp).forEach(k => {
-                delete childrenProp[k];
-            });
-        }
+        Object.keys(childrenProp).forEach(k => {
+            delete childrenProp[k];
+        });
+        this.mutated();
+    }
+
+    /***
+     * remove a child from it's list property
+     * and then refresh the page.  For a list just marks it as removed.
+     *
+     * @param childrenProp
+     */
+    childrenRemove(child) {
+        delete child._parentList[child.id];
         this.mutated();
     }
 

@@ -140,7 +140,6 @@ class PageIndex(SeleniumTest):
 
     def test_children_tables(self):
         for t, b, c in [('children_table', 'add_child_button', 'clear_child_button'),
-                        ('list_children_table', 'add_list_child_button', 'clear_list_child_button'),
                         ('other_children_table', 'add_other_child_button', 'clear_other_child_button')]:
             table = self.driver.find_element_by_id(t)
             self.assertTrue(table, t)

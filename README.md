@@ -3,13 +3,17 @@ Tiny ECMAScript 6 class based declarative JavaScript MVC.
 
 DeclareMVC is intended for simple UI usages that extend on basic HTML layouts with ECMAScript 6 classes controlling the page.
 
-It features automatic context assignment so no messing about with *this* or *bind()* is required.  Lightweight, it is 
+It features automatic context assignment, so no messing about with *this* or *bind()* is required.  Lightweight, it is 
 ideal for adding UI behaviours to existing HTML pages and controllers.  Especially CRUD pages that require handling child
 objects.
 
 There is no support for components, extensions or complicated rendering.  Use a templating language such as 
 JINJA2 or similar for those uses.  The method for determining page updates is rather simple, any *data-click* or *data-set*
 action causes an update event.  When adding to a child list use the *childrenAdd()* method to raise an update event.
+
+Simple add via this CDN script.
+
+    <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc/declare_mvc.js"></script>
 
 Supports these declarations:
 
@@ -311,3 +315,57 @@ HTML
 
     <select id="select" data-set="select_value" data-options="animals"> </select>
 
+Methods
+=======
+
+The extension Class has a few methods to help out.
+
+    /**
+     * update elements on the page after something may have
+     * changed
+     */
+    mutated()
+    
+Updates the page if you alter properties not using *data-click*, *data-repeat*, *childrenAdd()* or *childrendClear()*.  
+    
+    /***
+     * Add a child or children to a model list property
+     *
+     * @param child: a single child or a list of children to add
+     * @param childrenProp: (optional, defaults to children) the property to add the children to.
+     */
+    childrenAdd(child, childrenProp)
+
+Add a child class instance to a view controller property.  By default uses the builtin *children* object.  
+Pass a **childrenProp** parameter to use another property.  Supports objects and lists.
+
+    /***
+     * remove all items from a child list property
+     * and then refresh the page
+     *
+     * @param childrenProp
+     */
+    childrenClear(childrenProp)
+    
+Removes all items from a child list property.  By default uses the builtin *children* object.  
+Pass a **childrenProp** parameter to use another property.
+
+General Operations
+==================
+
+Adding children to a list using a JSON ajax response
+----------------------------------------------------
+
+    $.ajax('/names').then(results => {
+        this.childrenAdd(results.map(r=>new ChildModel(r)));
+    }
+
+Removing an item from a list
+----------------------------
+
+From an object property.
+
+
+    clickRemoveChild() {
+        this._parent.childrenRemove(this);
+    }

@@ -159,31 +159,6 @@
         </tr>
         </tbody>
     </table>
-    <h3>List Children</h3>
-    <button data-click="clickAddListChild()" id="add_list_child_button">Add List Child</button>
-    <button data-click="clickClearListChild()" id="clear_list_child_button">Clear List Children</button>
-
-    <table id="list_children_table" class="table">
-        <thead>
-        <tr>
-            <th>id</th>
-            <th>Title</th>
-            <th>Name</th>
-            <th>New Name</th>
-        </tr>
-        </thead>
-        <tbody data-repeat="listChildren">
-        <tr>
-            <td>
-                <button data-click="clickRemoveListChild()">Remove</button>
-                <span data-text="id"></span></td>
-            <td data-text="title"></td>
-            <td data-text="name"></td>
-            <td><input data-set="name"></td>
-        </tr>
-        </tbody>
-    </table>
-
     <p id="loading_finished"></p>
 </div>
 <script src="/static/auto_reload.js"></script>

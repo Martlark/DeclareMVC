@@ -8,11 +8,7 @@ class ChildModel {
     }
 
     clickRemoveChild() {
-        delete this._parentList[this.id];
-    }
-
-    clickRemoveListChild() {
-        this._parent.listChildren = this._parent.listChildren.filter(p => p.id !== this.id);
+        this._parent.childrenRemove(this);
     }
 }
 
@@ -34,7 +30,6 @@ class ViewModel extends DeclareMVC {
         this.number_to_double = 1;
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
-        this.listChildren = [];
 
 
         $(document).ready(() => {
@@ -43,8 +38,6 @@ class ViewModel extends DeclareMVC {
                 results.forEach(child => {
                     child.id += 500;
                     this.childrenAdd(new ChildModel(child), this.otherChildren);
-                    child.id += 500;
-                    this.childrenAdd(new ChildModel(child), this.listChildren);
                 });
             }).always(() => {
                 $('#loading_finished').text('finished');
@@ -76,21 +69,6 @@ class ViewModel extends DeclareMVC {
         const id = Math.round(Math.random() * 100000);
         this.childrenAdd(new ChildModel({id: id, name: `Child ${id}`, title: 'Mrs'}));
         return true;
-    }
-
-    clickAddListChild() {
-        const id = Math.round(Math.random() * 100000);
-        this.listChildren.push(new ChildModel({
-            id: id,
-            name: `Added List Child ${id}`,
-            title: 'Mrs',
-            _parent: this,
-            _parentList: this.otherChildren
-        }));
-    }
-
-    clickClearListChild() {
-        this.childrenClear(this.listChildren);
     }
 
     clickClearOtherChild() {
