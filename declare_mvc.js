@@ -84,14 +84,17 @@ class DeclareMVC {
         return '';
     }
 
-    _dataGetContext(el, m) {
+    _dataGetContext(el, m, dataElement) {
         const id = $(el).closest('[data-child-id]').data('child-id');
         const prop = $(el).closest('[data-repeat]').data('repeat') || $(el).closest('[data-prop]').data('prop');
         let _context = this.children[Number(id)] || this;
+
         if (prop) {
             _context = eval(`this.${prop}[Number(id)]`) || this;
         }
-
+        if( !m){
+            throw `no method in [${dataElement}] for element: ${el}: ${el.innerText}`;
+        }
         const leftPart = m.toString().split('(')[0];
         if (!isNaN(m) || leftPart.includes('.') || m.includes('&&') || m.includes('||')) {
             return [_context, m]
@@ -117,7 +120,7 @@ class DeclareMVC {
      */
     _dataClick() {
         $("body").on('click', "[data-click]", el => {
-            const [_context, m] = this._dataGetContext(el.target, $(el.target).data('click'));
+            const [_context, m] = this._dataGetContext(el.target, $(el.target).data('click'), 'data-click');
             if (!this._evalError(m, _context)) {
                 this.mutated();
             }
@@ -126,7 +129,7 @@ class DeclareMVC {
 
     _dataVisible() {
         $("[data-visible]", this._parentSelector).each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('visible'));
+            const [_context, m] = this._dataGetContext(el, $(el).data('visible'), 'data-visible');
             const newState = this._evalError(m, _context);
             if (newState !== $(el).is(':visible')) {
                 if (newState) {
@@ -152,7 +155,7 @@ class DeclareMVC {
             } else {
                 state = JSON.parse((state));
             }
-            const [_context, m] = this._dataGetContext(el, $el.data('repeat'));
+            const [_context, m] = this._dataGetContext(el, $el.data('repeat'), 'data-repeat');
             const keys = Object.keys(eval(m));
             const currentKeys = [];
             $('[data-child-id]', el).each((index, item) => {
@@ -179,7 +182,7 @@ class DeclareMVC {
 
     _dataText() {
         $("[data-text]", this._parentSelector).each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('text'));
+            const [_context, m] = this._dataGetContext(el, $(el).data('text'), 'data-text');
             let text = this._evalError(m, _context);
             if (typeof text == "undefined")
                 text = '';
@@ -191,7 +194,7 @@ class DeclareMVC {
             }
         });
         $("[data-attr]", this._parentSelector).each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('attr'));
+            const [_context, m] = this._dataGetContext(el, $(el).data('attr'), 'data-atrr');
             let props = this._evalError(m, _context);
             Object.keys(props).forEach(k => {
                 const el_text = $(el).attr(k) || '';
@@ -209,7 +212,7 @@ class DeclareMVC {
          *
          */
         $("[data-options]", this._parentSelector).each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('options'));
+            const [_context, m] = this._dataGetContext(el, $(el).data('options'), 'data-options');
             const options = this._evalError(m, _context) || [];
             $(el).html(null);
             options.forEach(opt => {
@@ -220,7 +223,7 @@ class DeclareMVC {
         $("[data-set]", this._parentSelector).each((index, el) => {
             const tagName = $(el)[0].tagName;
             if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
-                const [_context, m] = this._dataGetContext(el, $(el).data('set'));
+                const [_context, m] = this._dataGetContext(el, $(el).data('set'), 'data-set');
                 const text = this._evalError(m, _context) || '';
                 if (text.toString() !== $(el).val()) {
                     $(el).val(text);
@@ -234,7 +237,7 @@ class DeclareMVC {
          * set a prop of an object instance from an input type
          */
         const set = (el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('set'));
+            const [_context, m] = this._dataGetContext(el, $(el).data('set'),'data-set');
             let v = $(el).val() || '';
             v = v.replace(/["\\]/g, '');
             let setter = `${m}="${v}"`;
