@@ -31,11 +31,14 @@ Jquery is required.  Include declare_mvc.js as per the example.
     <head>
         <meta charset="UTF-8">
         <title>Example DeclareMVC application</title>
+        <!-- jquery -->
         <script
                 src="https://code.jquery.com/jquery-3.3.1.min.js"
                 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
                 crossorigin="anonymous"></script>
-        <script src="static/declare_mvc.js"></script>
+        <!-- declare MVC from CDN -->
+        <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc@1.0.4/declare_mvc.js"></script>
+        <!-- your controller and models -->
         <script src="static/index.js"></script>
     </head>
     <body>
@@ -151,7 +154,11 @@ Details
 data-set
 --------
 
-Sets an instance property from an input element such as a INPUT, SELECT or TEXTAREA.  Example:
+Sets an instance property from an input element such as a INPUT, SELECT or TEXTAREA.  On first use
+the value from the controller/model property will be used to set the input value.  Thereafter the 
+property value will be updated as the input changes from keystrokes or updates.
+
+Example:
 
 JavaScript model:
 
@@ -185,6 +192,18 @@ JavaScript model:
 HTML:
 
     <button data-click="showAlert()">Show Alert</button>
+
+Return a promise from the click method and the page will update when
+the promise is resolved.  Example:
+
+    <button data-click="clickAjax()" id="ajax_click" title="calls ajax">Promise</button>
+
+
+    clickAjax(){
+        return $.ajax(`/ajax/${this.number_to_double}`).then(result=>this.ajax_value=result).fail((xhr, textStatus, errorThrown) =>
+            this.ajax_value =`${textStatus}`
+        );
+    }
 
 
 data-repeat
@@ -277,4 +296,18 @@ data-options
 ------------
 
 Provide the options for a SELECT input.  Must return a list of options.  This can either be a simple list of values or a 
-list of Objects, with this format: {value: "a", label: "The letter A"}.
+list of Objects, with this format: {value: "a", label: "The letter A"}.  Example:
+
+JavaScript model:
+
+    class ExampleModel {
+        constructor(){
+            this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
+            this.select_value = 'dog';
+        }
+    }
+    
+HTML
+
+    <select id="select" data-set="select_value" data-options="animals"> </select>
+

@@ -145,7 +145,7 @@ class DeclareMVC {
                         }
                     }, 50);
                 }
-                Promise.resolve(value).then(()=>res()).catch(() => res());
+                Promise.resolve(value).then(() => res()).catch(() => res());
             }
         });
     }
@@ -212,15 +212,19 @@ class DeclareMVC {
         $("[data-text]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'), 'data-text');
             if (_context && m) {
-                let text = this._evalError(m, _context);
-                if (typeof text == "undefined")
-                    text = '';
-                else
-                    text = text.toString();
-                const el_text = $(el).text();
-                if (text !== el_text) {
-                    $(el).text(text);
-                }
+                const res = (value) => {
+                    let text = value;
+                    if (typeof text == "undefined")
+                        text = '';
+                    else
+                        text = text.toString();
+                    const el_text = $(el).text();
+                    if (text !== el_text) {
+                        $(el).text(text);
+                    }
+                };
+                const value = this._evalError(m, _context);
+                Promise.resolve(value).then((value) => res(value)).catch((value) => res(value));
             }
         });
         $("[data-attr]", this._parentSelector).each((index, el) => {
@@ -298,6 +302,6 @@ class DeclareMVC {
             this.mutated();
         };
         $("[data-set]", this._parentSelector).each((index, el) => set(el));
-        $(this._parentSelector).on('keyup change', "[data-set]", evt => set(evt.target));
+        $(this._parentSelector).on('keyup change blur', "[data-set]", evt => set(evt.target));
     }
 }
