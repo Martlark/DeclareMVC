@@ -1,5 +1,6 @@
 # DeclareMVC
-Tiny ECMAScript 6 class based declarative JavaScript MVC.
+Tiny ECMAScript 6 class based declarative JavaScript MVC that joins a HTML page to ordinary JavasScript
+classes.
 
 DeclareMVC is intended for simple UI usages that extend on basic HTML layouts with ECMAScript 6 classes controlling the page.
 
@@ -14,6 +15,11 @@ action causes an update event.  When adding to a child list use the *childrenAdd
 Simple add via this CDN script.
 
     <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc/declare_mvc.js"></script>
+    
+   Or minimized:
+
+    <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc/declare_mvc.min.js"></script>
+    
 
 Supports these declarations:
 
@@ -40,8 +46,8 @@ Jquery is required.  Include declare_mvc.js as per the example.
                 src="https://code.jquery.com/jquery-3.3.1.min.js"
                 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
                 crossorigin="anonymous"></script>
-        <!-- declare MVC from CDN -->
-        <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc@1.0.4/declare_mvc.js"></script>
+        <!-- declare MVC from CDN with a version -->
+        <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc@1.0.5/declare_mvc.min.js"></script>
         <!-- your controller and models -->
         <script src="static/index.js"></script>
     </head>

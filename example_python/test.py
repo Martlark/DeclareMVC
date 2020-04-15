@@ -115,6 +115,10 @@ class SeleniumTest(unittest.TestCase):
 
 
 class PageIndex(SeleniumTest):
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.load_page(cls)
 
     def load_page(self):
         start_time = time.time()
@@ -131,7 +135,7 @@ class PageIndex(SeleniumTest):
         self.assertEqual(message, self.driver.find_element_by_id(f'message').text)
 
     def setUp(self):
-        self.load_page()
+        # self.load_page()
         self.initial_list_count = 5
 
     def test_load(self):
@@ -243,14 +247,6 @@ class PageIndex(SeleniumTest):
         self.assertEqual(0, int(p.text))
         self.assertDisplayed(p_less, 0)
         self.assertHidden(p_greater, 0)
-
-
-class PageAbout(SeleniumTest):
-    def test_get(self):
-        self.driver.get(f'{host_name}/about')
-        self.assertEqual(
-            self.driver.title,
-            'DeclareMVC Example and Testing application')
 
 
 if __name__ == '__main__':

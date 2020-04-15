@@ -11,13 +11,14 @@ version history
 14-Apr-2020 1.0.3 - use promise resolve after click
 14-Apr-2020 1.0.4 - trap promise errors
 14-Apr-2020 1.0.5 - remove data-repeat list support
+15-Apr-2020 1.0.6 - improve refresh performance
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.0.5';
+        this._version = '1.0.6';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -28,12 +29,16 @@ class DeclareMVC {
      * update elements on the page after something may have
      * changed
      */
-    mutated() {
+    mutated(caller) {
+        let changed = false;
         if (this._dataRepeat()) {
             this._dataValue();
+            changed = true;
         }
-        this._dataText();
+        changed = changed || this._dataText();
         this._dataVisible();
+        // console.log('mutated', caller, changed);
+        return changed;
     }
 
     /***
@@ -53,7 +58,7 @@ class DeclareMVC {
             child._parentList = childrenProp;
             childrenProp[child.id] = child;
         });
-        this.mutated();
+        this.mutated('childrenAdd');
     }
 
     /***
@@ -67,7 +72,7 @@ class DeclareMVC {
         Object.keys(childrenProp).forEach(k => {
             delete childrenProp[k];
         });
-        this.mutated();
+        this.mutated('childrenClear');
     }
 
     /***
@@ -78,12 +83,22 @@ class DeclareMVC {
      */
     childrenRemove(child) {
         delete child._parentList[child.id];
-        this.mutated();
+        this.mutated('childrenRemove');
     }
 
     /* private methods */
 
-    _evalError(thing, _context) {
+    /**
+     * evaluate a bit of JavaScript and return the result.  Logs errors and then
+     * returns ''
+     *
+     * @param thing - javascript
+     * @param _context - calling context
+     * @param _value - a value to be used with the thing
+     * @return {string|any} - the value as calculated
+     * @private
+     */
+    _evalError(thing, _context, _value) {
         try {
             return eval(thing.replace(/\n/g, "\\n"));
         } catch (e) {
@@ -92,6 +107,15 @@ class DeclareMVC {
         return '';
     }
 
+    /**
+     * get the method and context for execution
+     *
+     * @param el - element data-* is located in
+     * @param m - the method to evaluate
+     * @param dataElement - the data-* name to be found
+     * @return {(*|DeclareMVC)[]|*[]|(*|DeclareMVC|string)[]}
+     * @private
+     */
     _dataGetContext(el, m, dataElement) {
         const id = $(el).closest('[data-child-id]').data('child-id');
         const prop = $(el).closest('[data-repeat]').data('repeat') || $(el).closest('[data-prop]').data('prop');
@@ -121,7 +145,7 @@ class DeclareMVC {
         this._dataValue(); // set initial input type values
         this._dataSet(); // set updaters from inputs
         this._dataClick(); // set clicks
-        this.mutated();
+        this.mutated('_start');
     }
 
     /**
@@ -129,22 +153,19 @@ class DeclareMVC {
      */
     _dataClick() {
         $("body").on('click', "[data-click]", el => {
-            let target = el.target, attempts = 10;
-            let click = $(target).data('click');
-            while (!click && --attempts > 0) {
-                target = $(target).parent();
-                click = $(target).data('click');
-            }
+            let click = $(el.target).closest('[data-click]').data('click');
             const [_context, m] = this._dataGetContext(el.target, click, 'data-click');
             if (_context && m) {
                 const value = this._evalError(m, _context);
                 const res = () => {
-                    this.mutated();
+                    this.mutated('_dataClick');
                     let intervals = 5;
                     const interval = setInterval(() => {
-                        this.mutated();
-                        intervals--;
-                        if (intervals <= 0) {
+                        if (this.mutated(`_dataClick:${intervals}`)) {
+                            if (--intervals <= 0) {
+                                clearInterval(interval);
+                            }
+                        } else {
                             clearInterval(interval);
                         }
                     }, 50);
@@ -213,22 +234,20 @@ class DeclareMVC {
 
 
     _dataText() {
+        let mutated = false;
         $("[data-text]", this._parentSelector).each((index, el) => {
             const [_context, m] = this._dataGetContext(el, $(el).data('text'), 'data-text');
             if (_context && m) {
-                const res = (value) => {
-                    let text = value;
-                    if (typeof text == "undefined")
-                        text = '';
-                    else
-                        text = text.toString();
-                    const el_text = $(el).text();
-                    if (text !== el_text) {
-                        $(el).text(text);
-                    }
-                };
-                const value = this._evalError(m, _context);
-                Promise.resolve(value).then((value) => res(value)).catch((value) => res(value));
+                let text = this._evalError(m, _context);
+                if (typeof text == "undefined")
+                    text = '';
+                else
+                    text = text.toString();
+                const el_text = $(el).text();
+                if (text !== el_text) {
+                    $(el).text(text);
+                    mutated = true;
+                }
             }
         });
         $("[data-attr]", this._parentSelector).each((index, el) => {
@@ -239,10 +258,12 @@ class DeclareMVC {
                     const el_text = $(el).attr(k) || '';
                     if (props[k] !== el_text) {
                         $(el).attr(k, props[k]);
+                        mutated = true;
                     }
                 });
             }
         });
+        return mutated;
     }
 
     _dataValue() {
@@ -251,16 +272,21 @@ class DeclareMVC {
          * set up select option values
          *
          */
+        let mutated = false;
         $("[data-options]", this._parentSelector).each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('options'), 'data-options');
+            const $el = $(el), [_context, m] = this._dataGetContext(el, $el.data('options'), 'data-options');
             if (!(_context && m)) {
                 return;
             }
-            const options = this._evalError(m, _context) || [];
-            $(el).html(null);
-            options.forEach(opt => {
-                $(el).append(`<option value=${opt.value || opt}>${opt.label || opt}</option>`);
-            })
+            let options = this._evalError(m, _context) || [];
+            if ($el.data('options-state') !== JSON.stringify(options)) {
+                $el.html(null);
+                $el.data('options-state', JSON.stringify(options));
+                options.forEach(opt => {
+                    $el.append(`<option value=${opt.value || opt}>${opt.label || opt}</option>`);
+                });
+                mutated = true;
+            }
         });
 
         $("[data-set]", this._parentSelector).each((index, el) => {
@@ -270,9 +296,11 @@ class DeclareMVC {
                 const text = this._evalError(m, _context) || '';
                 if (text.toString() !== $(el).val()) {
                     $(el).val(text);
+                    mutated = true;
                 }
             }
         });
+        return mutated
     }
 
     _dataSet() {
@@ -284,26 +312,24 @@ class DeclareMVC {
             if (!(_context && m)) {
                 return;
             }
-            let v = $(el).val() || '';
-            v = v.replace(/["\\]/g, '');
-            let setter = `${m}="${v}"`;
-            const tagName = $(el)[0].tagName;
+            let _value = $(el).val() || '';
+            let setter = `${m}=_value`;
             const tagType = $(el)[0].type;
             if (tagType === 'checkbox') {
-                v = $(el).is(':checked');
-                setter = `${m}=${v}`
+                _value = $(el).is(':checked');
+                setter = `${m}=_value`
             } else {
                 switch (typeof eval(m)) {
                     case "function":
-                        setter = `${m}("${v}")`;
+                        setter = `${m}(_value)`;
                         break;
                     case "number":
-                        setter = `${m}=Number("${v}")`;
+                        setter = `${m}=Number(_value)`;
                         break;
                 }
             }
-            this._evalError(setter, _context);
-            this.mutated();
+            this._evalError(setter, _context, _value);
+            this.mutated('_dataSet');
         };
         $("[data-set]", this._parentSelector).each((index, el) => set(el));
         $(this._parentSelector).on('keyup change blur', "[data-set]", evt => set(evt.target));

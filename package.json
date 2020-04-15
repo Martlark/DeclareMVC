@@ -1,0 +1,30 @@
+{
+  "name": "declaremvc",
+  "version": "1.0.6",
+  "description": "Tiny ECMAScript 6 class based declarative JavaScript MVC.",
+  "main": "declare_mvc.js",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt-node-minify": "^1.5.0",
+    "gulp": "^4.0.2",
+    "gulp-minify": "^3.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gulp": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Martlark/DeclareMVC.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "MVC"
+  ],
+  "author": "Andrew Rowe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Martlark/DeclareMVC/issues"
+  },
+  "homepage": "https://github.com/Martlark/DeclareMVC#readme"
+}
