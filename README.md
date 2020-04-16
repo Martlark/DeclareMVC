@@ -80,12 +80,9 @@ Add the declarations to the HTML to connect page actions to your controller.
 
 That's it!
 
+Example on codesandbox:
 
-<iframe src="https://codesandbox.io/embed/great-lichterman-b4ufu?fontsize=14&hidenavigation=1&theme=dark"
-     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
-     title="great-lichterman-b4ufu"
-     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr"
-     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
+https://codesandbox.io/embed/great-lichterman-b4ufu?fontsize=14&hidenavigation=1&theme=dark
 
 
 Simple add via this CDN script.
