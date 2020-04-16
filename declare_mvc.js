@@ -1,5 +1,5 @@
 /*
-DeclareMVC a minimal declartive model view controller JavaScript HTML framework
+DeclareMVC a minimal declarative model view controller JavaScript HTML framework
 Copyright (c) 2020 Andrew Rowe
 rowe.andrew.d@gmail.com
 
@@ -12,6 +12,7 @@ version history
 14-Apr-2020 1.0.4 - trap promise errors
 14-Apr-2020 1.0.5 - remove data-repeat list support
 15-Apr-2020 1.0.6 - improve refresh performance
+16-Apr-2020 1.0.7 - improve input update
  */
 
 
@@ -35,8 +36,8 @@ class DeclareMVC {
             this._dataValue();
             changed = true;
         }
-        if( this._dataText() ){
-            changed=true;
+        if (this._dataText()) {
+            changed = true;
         }
         this._dataVisible();
         // console.log('mutated', caller, changed);
@@ -161,9 +162,11 @@ class DeclareMVC {
                 const value = this._evalError(m, _context);
                 const res = () => {
                     this.mutated('_dataClick');
+                    this._dataValue();
                     let intervals = 5;
                     const interval = setInterval(() => {
                         if (this.mutated(`_dataClick:${intervals}`)) {
+                            this._dataValue();
                             if (--intervals <= 0) {
                                 clearInterval(interval);
                             }
