@@ -18,11 +18,6 @@ def api_names():
     return jsonify([dict(id=x + 1, name=f'Name {1 + x}', title='Mr') for x in range(5)])
 
 
-@app.route('/about')
-def public_about():
-    return render_template("about.html", title="DeclareMVC Example and Testing application")
-
-
 @app.route('/shutdown')
 def testing_shutdown():
     if app.testing:

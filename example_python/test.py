@@ -6,6 +6,7 @@ import time
 import unittest
 
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 from example_python.main import app
 
@@ -123,7 +124,7 @@ class PageIndex(SeleniumTest):
     def load_page(self):
         start_time = time.time()
         self.driver.get(f'{host_name}/')
-        while time.time() < start_time + 5:
+        while time.time() < start_time + 15:
             p = self.driver.find_element_by_id('loading_finished')
             if p.text == 'finished':
                 return True
@@ -191,7 +192,7 @@ class PageIndex(SeleniumTest):
         self.assertEqual(v, input_input.get_attribute('value'))
         self.assertEqual(v, p.text)
         # new line
-        input_input.send_keys('textarea', webdriver.common.keys.Keys.ENTER)
+        input_input.send_keys('textarea', Keys.ENTER)
         input_input.send_keys('textarea', v2)
         self.assertTrue(v in p.text)
         self.assertTrue(v2 in p.text)
@@ -224,6 +225,20 @@ class PageIndex(SeleniumTest):
         self.assertEqual("true", p.text)
         s.click()
         self.assertEqual("false", p.text)
+
+    def test_promise(self):
+        button = self.driver.find_element_by_id('ajax_click')
+        i = self.driver.find_element_by_css_selector('[data-set=number_to_double]')
+        p = self.driver.find_element_by_id('ajax_value')
+        i.send_keys('0')
+        button.click()
+        time.sleep(0.6)
+        self.assertEqual('20', p.text)
+        i.clear()
+        i.send_keys("5")
+        button.click()
+        time.sleep(0.6)
+        self.assertEqual('error', p.text)
 
     def test_counter_click(self):
         button = self.driver.find_element_by_id('counter_add_button')

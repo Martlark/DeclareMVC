@@ -1,8 +1,6 @@
 # DeclareMVC
-Tiny ECMAScript 6 class based declarative JavaScript MVC that joins a HTML page to ordinary JavasScript
+A tiny ECMAScript 6 class based declarative JavaScript MVC that joins a HTML page to ordinary JavasScript
 classes.
-
-DeclareMVC is intended for simple UI usages that extend on basic HTML layouts with ECMAScript 6 classes controlling the page.
 
 It features automatic context assignment, so no messing about with *this* or *bind()* is required.  Lightweight, it is 
 ideal for adding UI behaviours to existing HTML pages and controllers.  Especially CRUD pages that require handling child
@@ -11,6 +9,84 @@ objects.
 There is no support for components, extensions or complicated rendering.  Use a templating language such as 
 JINJA2 or similar for those uses.  The method for determining page updates is rather simple, any *data-click* or *data-set*
 action causes an update event.  When adding to a child list use the *childrenAdd()* method to raise an update event.
+
+Quick start
+===========
+
+Create a HTML page.
+
+```html
+    <head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc/declare_mvc.js"></script>
+    </head>
+    <body>
+        <input>
+        <p></p>
+        <button>click me</button>
+        <p></p>
+    </body>
+```
+
+Create a controller for the page in JavaScript (index.js) and extend it using the class DeclareMVC. 
+
+```javascript
+    class viewController extends DeclareMVC{
+        constructor() {
+            super();
+            this.inputValue = '';
+            this.buttonOutput = '';
+            this.clickCount = 0;
+        }      
+        clickButton(){
+            this.buttonOutput = `hello number ${++this.clickCount}`;
+        }   
+    }
+    const view = new viewController();
+
+```
+
+Add the controller to the page
+
+```html
+    <head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/martlark/declaremvc/declare_mvc.js"></script>
+    <script src="index.js"></script>
+    </head>
+    <body>
+        <input>
+        <p></p>
+        <button>click me</button>
+        <p></p>
+    </body>
+```
+
+Add the declarations to the HTML to connect page actions to your controller.
+
+```html
+    <body>
+        <input data-set="inputValue">
+        <p data-text="inputValue"></p>
+        <button data-click="clickButton()">click me</button>
+        <p data-text="buttonOutput"></p>
+        <script>view = new viewController()</script>
+    </body>
+```
+
+That's it!
+
+
+<iframe src="https://codesandbox.io/embed/great-lichterman-b4ufu?fontsize=14&hidenavigation=1&theme=dark"
+     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+     title="great-lichterman-b4ufu"
+     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr"
+     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
+
 
 Simple add via this CDN script.
 
