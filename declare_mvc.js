@@ -35,7 +35,9 @@ class DeclareMVC {
             this._dataValue();
             changed = true;
         }
-        changed = changed || this._dataText();
+        if( this._dataText() ){
+            changed=true;
+        }
         this._dataVisible();
         // console.log('mutated', caller, changed);
         return changed;

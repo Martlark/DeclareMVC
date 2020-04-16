@@ -82,7 +82,7 @@ That's it!
 
 Example on codesandbox:
 
-https://codesandbox.io/embed/great-lichterman-b4ufu?fontsize=14&hidenavigation=1&theme=dark
+https://codesandbox.io/embed/great-lichterman-b4ufu
 
 
 Simple add via this CDN script.
