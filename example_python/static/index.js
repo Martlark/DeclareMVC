@@ -1,14 +1,10 @@
-class ChildModel {
+class ChildModel extends DeclareMVCChild{
     constructor(props) {
-        this.id = props.id;
-        this.title = props.title;
-        this.name = props.name;
-        this._parentList = props._parentList;
-        this._parent = props._parent;
+        super(props);
     }
 
     clickRemoveChild() {
-        this._parent.childrenRemove(this);
+        this.remove();
     }
 }
 

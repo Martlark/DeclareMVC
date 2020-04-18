@@ -168,17 +168,6 @@ class DeclareMVC {
                 const res = () => {
                     this.mutated('_dataClick');
                     this._dataValue();
-                    let intervals = 5;
-                    const interval = setInterval(() => {
-                        if (this.mutated(`_dataClick:${intervals}`)) {
-                            this._dataValue();
-                            if (--intervals <= 0) {
-                                clearInterval(interval);
-                            }
-                        } else {
-                            clearInterval(interval);
-                        }
-                    }, 50);
                 }
                 Promise.resolve(value).then(() => res()).catch(() => res());
             }
@@ -313,9 +302,7 @@ class DeclareMVC {
                 mutated = this._setInputs($repeatedElement, mutated);
             });
         } else {
-            Array.from($("[data-set]", this._parentSelector)).forEach((el) => {
-                mutated = this._setInputs(el, mutated)
-            });
+            mutated = this._setInputs(this._parentSelector, mutated)
         }
         return mutated
     }
@@ -350,5 +337,17 @@ class DeclareMVC {
         };
         $("[data-set]", this._parentSelector).each((index, el) => set(el));
         $(this._parentSelector).on('keyup change blur', "[data-set]", evt => set(evt.target));
+    }
+}
+
+class DeclareMVCChild {
+    constructor(props) {
+        this.id = props.id;
+        this._parent = props._parent;
+        Object.keys(props).map(k => this[k] = props[k]);
+    }
+
+    remove() {
+        this._parent.childrenRemove(this);
     }
 }
