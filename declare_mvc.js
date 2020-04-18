@@ -13,13 +13,14 @@ version history
 14-Apr-2020 1.0.5 - remove data-repeat list support
 15-Apr-2020 1.0.6 - improve refresh performance
 16-Apr-2020 1.0.7 - improve input update
+17-Apr-2020 1.0.8 - no idea yet
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.0.6';
+        this._version = '1.0.8';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -32,8 +33,9 @@ class DeclareMVC {
      */
     mutated(caller) {
         let changed = false;
-        if (this._dataRepeat()) {
-            this._dataValue();
+        const mutationList = this._dataRepeat()
+        if (mutationList.length > 0) {
+            this._dataValue(mutationList);
             changed = true;
         }
         if (this._dataText()) {
@@ -62,6 +64,7 @@ class DeclareMVC {
             childrenProp[child.id] = child;
         });
         this.mutated('childrenAdd');
+        return this;
     }
 
     /***
@@ -76,6 +79,7 @@ class DeclareMVC {
             delete childrenProp[k];
         });
         this.mutated('childrenClear');
+        return this;
     }
 
     /***
@@ -87,6 +91,7 @@ class DeclareMVC {
     childrenRemove(child) {
         delete child._parentList[child.id];
         this.mutated('childrenRemove');
+        return this;
     }
 
     /* private methods */
@@ -197,18 +202,14 @@ class DeclareMVC {
     }
 
     _dataRepeat() {
-        let hasMutated = false;
+        const mutationList = [];
         $("[data-repeat]", this._parentSelector).each((index, el) => {
             const $el = $(el);
             let state = $el.data('repeat-state');
             if (!state) {
-                let html = $el.html();
+                state = $el.html();
                 $el.html(null);
-                hasMutated = true;
-                state = {html: html};
-                $el.data('repeat-state', JSON.stringify(state));
-            } else {
-                state = JSON.parse((state));
+                $el.data('repeat-state', state);
             }
             const [_context, m] = this._dataGetContext(el, $el.data('repeat'), 'data-repeat');
             if (!(_context && m)) {
@@ -221,20 +222,18 @@ class DeclareMVC {
                 const childId = $(item).data('child-id').toString();
                 if (keys.indexOf(childId) === -1) {
                     $(item).remove();
-                    hasMutated = true;
                 } else {
                     currentKeys.push(childId);
                 }
             });
             // add any new
-            keys.forEach(k => {
-                if (currentKeys.indexOf(k.toString()) === -1) {
-                    $el.append($(state.html).attr('data-child-id', k));
-                    hasMutated = true;
-                }
-            });
+            $el.append(keys.filter(k => currentKeys.indexOf(k.toString()) === -1).map(k => {
+                const $child = $(state).attr('data-child-id', k);
+                mutationList.push($child);
+                return $child;
+            }));
         });
-        return hasMutated;
+        return mutationList;
     }
 
 
@@ -271,14 +270,29 @@ class DeclareMVC {
         return mutated;
     }
 
-    _dataValue() {
-        /***
-         * set the value of an input from a instance prop when first used.
-         * set up select option values
-         *
-         */
+    _setInputs($element, mutated) {
+        $('[data-set]', $element).each((index, el) => {
+            const $el = $(el), tagName = $el[0].tagName;
+            if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
+                const [_context, m] = this._dataGetContext($el, $el.data('set'), 'data-set');
+                const text = this._evalError(m, _context) || '';
+                if (text.toString() !== $el.val()) {
+                    $el.val(text);
+                    mutated = true;
+                }
+            }
+        })
+        return mutated;
+    }
+
+    /***
+     * set the value of an input from a instance prop when first used.
+     * set up select option values
+     *
+     */
+    _dataValue(mutationList) {
         let mutated = false;
-        $("[data-options]", this._parentSelector).each((index, el) => {
+        Array.from($("[data-options]", this._parentSelector)).forEach(el => {
             const $el = $(el), [_context, m] = this._dataGetContext(el, $el.data('options'), 'data-options');
             if (!(_context && m)) {
                 return;
@@ -294,17 +308,15 @@ class DeclareMVC {
             }
         });
 
-        $("[data-set]", this._parentSelector).each((index, el) => {
-            const tagName = $(el)[0].tagName;
-            if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
-                const [_context, m] = this._dataGetContext(el, $(el).data('set'), 'data-set');
-                const text = this._evalError(m, _context) || '';
-                if (text.toString() !== $(el).val()) {
-                    $(el).val(text);
-                    mutated = true;
-                }
-            }
-        });
+        if (mutationList) {
+            mutationList.forEach($repeatedElement => {
+                mutated = this._setInputs($repeatedElement, mutated);
+            });
+        } else {
+            Array.from($("[data-set]", this._parentSelector)).forEach((el) => {
+                mutated = this._setInputs(el, mutated)
+            });
+        }
         return mutated
     }
 
