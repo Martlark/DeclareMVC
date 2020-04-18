@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"
+    ></script>
+    <script src="/cdn/declare_mvc.js"></script>
+    <script src="static/codesandbox.js"></script>
+</head>
+<body>
+<input data-set="inputValue"/>
+<p data-text="inputValue"></p>
+<button data-click="clickButton()">click me</button>
+<p data-text="buttonOutput"></p>
+<p data-text="selectValue"></p>
+<select data-options="selectOptions" data-set="selectValue"></select>
+<button data-click="clickAdd()">Add</button>
+<table>
+    <thead>
+    <tr>
+        <th>Done</th>
+        <th>Thing</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody data-repeat="children">
+    <tr>
+        <td data-text="done"></td>
+        <td>
+            <span data-text="thing" data-visible="!editThing" data-click="clickEditThing()"></span>
+            <span data-visible="editThing">
+              <input data-set="newThing">
+              <button data-click="clickEditThing()">ok</button>
+              <button data-click="clickEditThingCancel()">cancel</button>
+            </span>
+        </td>
+        <td>
+            <button data-click="clickDone()">Finish</button>
+            <button data-click="clickRemove()">Remove</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -13,6 +13,11 @@ def page_index():
     return render_template('index.html')
 
 
+@app.route('/codesandbox')
+def page_codesandbox():
+    return render_template('codesandbox.html')
+
+
 @app.route('/names')
 def api_names():
     return jsonify([dict(id=x + 1, name=f'Name {1 + x}', title='Mr') for x in range(5)])

@@ -1,14 +1,10 @@
-class ChildModel {
+class ChildModel extends DeclareMVCChild{
     constructor(props) {
-        this.id = props.id;
-        this.title = props.title;
-        this.name = props.name;
-        this._parentList = props._parentList;
-        this._parent = props._parent;
+        super(props);
     }
 
     clickRemoveChild() {
-        this._parent.childrenRemove(this);
+        this.remove();
     }
 }
 
@@ -21,6 +17,7 @@ class ViewModel extends DeclareMVC {
         this.titleAttributes = {style: `background: ${this.titleColors[this.titleAttrIndex]}`};
         this.counter = 0;
         this.num = 20;
+        this.numberToAdd = 2000;
         this.inputValue = '';
         this.text_area = '';
         this.checkboxValue = false;
@@ -34,7 +31,7 @@ class ViewModel extends DeclareMVC {
 
         $(document).ready(() => {
             $.ajax('/names').then(results => {
-                this.childrenAdd(results.map(r=>new ChildModel(r)));
+                this.childrenAdd(results.map(r => new ChildModel(r)));
                 results.forEach(child => {
                     child.id += 500;
                     this.childrenAdd(new ChildModel(child), this.otherChildren);
@@ -45,17 +42,17 @@ class ViewModel extends DeclareMVC {
         });
     }
 
-    clickAjax(){
-        return $.ajax(`/ajax/${this.number_to_double}`).then(result=>this.ajax_value=result).fail((xhr, textStatus, errorThrown) =>
-            this.ajax_value =`${textStatus}`
+    clickAjax() {
+        return $.ajax(`/ajax/${this.number_to_double}`).then(result => this.ajax_value = result).fail((xhr, textStatus, errorThrown) =>
+            this.ajax_value = `${textStatus}`
         );
     }
 
     func(newValue) {
-        if( typeof newValue == "undefined"){
+        if (typeof newValue == "undefined") {
             return this.funcValue;
         }
-        this.funcValue=newValue.toString().toUpperCase();
+        this.funcValue = newValue.toString().toUpperCase();
     }
 
     clickTitleNextColor() {
@@ -79,19 +76,21 @@ class ViewModel extends DeclareMVC {
         this.childrenClear();
     }
 
-    clickAddOtherChild() {
-        const id = Math.round(Math.random() * 100000);
-        this.otherChildren[id] = new ChildModel({
-            id: id,
-            name: `Added Other Child ${id}`,
-            title: 'Mrs',
-            _parent: this,
-            _parentList: this.otherChildren
-        });
+    clickAddOtherChild(numberToAdd = 1) {
+        for (let i = 0; i < numberToAdd; i++) {
+            const id = Math.round(Math.random() * 100000);
+            this.otherChildren[id] = new ChildModel({
+                id: id,
+                name: `Added Other Child ${id}`,
+                title: 'Mrs',
+                _parent: this,
+                _parentList: this.otherChildren
+            });
+        }
     }
 
     clickButton1(value) {
-        this.counter+=value;
+        this.counter += value;
     }
 }
 
