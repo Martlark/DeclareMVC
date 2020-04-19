@@ -74,7 +74,6 @@ Add the declarations to the HTML to connect page actions to your controller.
         <p data-text="inputValue"></p>
         <button data-click="clickButton()">click me</button>
         <p data-text="buttonOutput"></p>
-        <script>view = new viewController()</script>
     </body>
 ```
 
