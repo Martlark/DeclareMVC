@@ -10,7 +10,7 @@ version history
 14-Apr-2020 1.0.2 - improve error handling
 14-Apr-2020 1.0.3 - use promise resolve after click
 14-Apr-2020 1.0.4 - trap promise errors
-14-Apr-2020 1.0.5 - remove data-repeat list support
+14-Apr-2020 1.0.5 - remove data-children list support
 15-Apr-2020 1.0.6 - improve refresh performance
 16-Apr-2020 1.0.7 - improve input update
 17-Apr-2020 1.0.8 - no idea yet
@@ -33,7 +33,7 @@ class DeclareMVC {
      */
     mutated(caller) {
         let changed = false;
-        const mutationList = this._dataRepeat()
+        const mutationList = this._dataChildren()
         if (mutationList.length > 0) {
             this._dataValue(mutationList);
             changed = true;
@@ -126,11 +126,15 @@ class DeclareMVC {
      */
     _dataGetContext(el, m, dataElement) {
         const id = $(el).closest('[data-child-id]').data('child-id');
-        const prop = $(el).closest('[data-repeat]').data('repeat') || $(el).closest('[data-prop]').data('prop');
+        const prop = $(el).closest('[data-children]').data('children') || $(el).closest('[data-prop]').data('prop');
         let _context = this.children[Number(id)] || this;
 
         if (prop) {
-            _context = this[prop][Number(id)] || this;
+            if (id == '_prop') {
+                _context = this[prop];
+            } else {
+                _context = this[prop][Number(id)] || this;
+            }
         }
         if (!m) {
             console.log(`no method in [${dataElement}] for element: ${el}: ${el.innerText}`);
@@ -190,21 +194,26 @@ class DeclareMVC {
         });
     }
 
-    _dataRepeat() {
+    _dataChildren() {
         const mutationList = [];
-        $("[data-repeat]", this._parentSelector).each((index, el) => {
+        $("[data-children]", this._parentSelector).each((index, el) => {
             const $el = $(el);
             let state = $el.data('repeat-state');
             if (!state) {
+                ``
                 state = $el.html();
                 $el.html(null);
                 $el.data('repeat-state', state);
             }
-            const [_context, m] = this._dataGetContext(el, $el.data('repeat'), 'data-repeat');
+            const [_context, m] = this._dataGetContext(el, $el.data('children'), 'data-children');
             if (!(_context && m)) {
                 return;
             }
-            const keys = Object.keys(eval(m));
+            let children = eval(m)
+            if (typeof children.create === "function") {
+                children = {'_prop': children};
+            }
+            const keys = Object.keys(children);
             const currentKeys = [];
             $('[data-child-id]', el).each((index, item) => {
                 // remove any not in current children
@@ -217,6 +226,10 @@ class DeclareMVC {
             });
             // add any new
             $el.append(keys.filter(k => currentKeys.indexOf(k.toString()) === -1).map(k => {
+                if (children[k].create) {
+                    /* create using model method */
+                    state = children[k].create(index, el);
+                }
                 const $child = $(state).attr('data-child-id', k);
                 mutationList.push($child);
                 return $child;

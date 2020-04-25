@@ -6,7 +6,7 @@ It features automatic context assignment, so no messing about with *this* or *bi
 ideal for adding UI behaviours to existing HTML pages and controllers.  Especially CRUD pages that require handling child
 objects.
 
-There is no support for components, extensions or complicated rendering.  Use a templating language such as 
+There is no support for extensions, life cycles or complicated rendering.  Use a templating language such as 
 JINJA2 or similar for those uses.  The method for determining page updates is rather simple, any *data-click* or *data-set*
 action causes an update event.  When adding to a child list use the *childrenAdd()* method to raise an update event.
 
@@ -97,7 +97,7 @@ Supports these declarations:
 
 * data-set
 * data-click
-* data-repeat
+* data-children
 * data-text
 * data-visible
 * data-options
@@ -106,7 +106,7 @@ Supports these declarations:
 Example:
 ========
 
-Jquery is required.  Include declare_mvc.js as per the example.
+Jquery is required.  Include declare_mvc.js as per the example from jsdelivr CDN.
 
     <!DOCTYPE html>
     <html lang="en">
@@ -216,7 +216,7 @@ and managing HTML elements.
             <th>New Name</th>
         </tr>
         </thead>
-            <tbody data-repeat="children">
+            <tbody data-children="children">
             <tr>
                 <td><button data-click="clickRemoveChild()">Remove</button><span data-text="id"></span></td>
                 <td data-text="title"></td>
@@ -226,7 +226,7 @@ and managing HTML elements.
         </tbody>
     </table>
 
-The HTML uses the *data-repeat* directive to create the <tr> rows of the table.  DeclareMVC will dynamically maintain the
+The HTML uses the *data-children* directive to create the <tr> rows of the table.  DeclareMVC will dynamically maintain the
 list from the properties of the children.  Here the entire <tr> element will be repeated.  When items are removed the 
 corresponding <tr> element will be removed as long as a *data-click* causes the removal, or *childrenClear()* is called.
 
@@ -288,10 +288,10 @@ the promise is resolved.  Example:
     }
 
 
-data-repeat
+data-children
 -----------
 
-Repeats HTML element for each item in a child property.  Example:
+Repeats HTML element for each item in a child property, or creates a single child component.  Example:
 
 JavaScript model:
 
@@ -311,13 +311,13 @@ JavaScript model:
     
 HTML:
 
-    <table data-repeat="children">
+    <table data-children="children">
         <tr><td data-text="id"></td></tr>
     </table>
 
 RESULTANT HTML:
 
-    <table data-repeat="children">
+    <table data-children="children">
         <tr data-child-id="0"><td data-text="id">0</td></tr>
         <tr data-child-id="1"><td data-text="id">1</td></tr>
         <tr data-child-id="2"><td data-text="id">2</td></tr>
@@ -404,7 +404,7 @@ The extension Class has a few methods to help out.
      */
     mutated()
     
-Updates the page if you alter properties not using *data-click*, *data-repeat*, *childrenAdd()* or *childrendClear()*.  
+Updates the page if you alter properties not using *data-click*, *data-children*, *childrenAdd()* or *childrendClear()*.  
     
     /***
      * Add a child or children to a model list property
@@ -448,3 +448,9 @@ From an object property.
     clickRemoveChild() {
         this._parent.childrenRemove(this);
     }
+
+Components
+==========
+
+The *data-children* directive can be used to add components to your page.  A component is a JavaScript class
+that creates it's own HTML on the page.
