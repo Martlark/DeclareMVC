@@ -104,6 +104,13 @@
             <td><b>data-set</b>, <b>data-text</b> using functions</td>
 
         </tr>
+        <tr>
+            <td>data-prop create</td>
+            <td data-children="createByClass"></td>
+            <td></td>
+            <td></td>
+
+        </tr>
         </tbody>
     </table>
 
@@ -122,7 +129,7 @@
             <th>New Name</th>
         </tr>
         </thead>
-        <tbody data-repeat="children">
+        <tbody data-children="children">
         <tr>
             <td>
                 <button data-click="clickRemoveChild()">Remove</button>
@@ -150,7 +157,7 @@
             <th>New Name</th>
         </tr>
         </thead>
-        <tbody data-repeat="otherChildren">
+        <tbody data-children="otherChildren">
         <tr>
             <td>
                 <button data-click="clickRemoveChild()">Remove</button>
@@ -159,6 +166,22 @@
             <td data-text="name"></td>
             <td><input data-set="name"></td>
         </tr>
+        </tbody>
+    </table>
+    <h3>Create Children from a create() method to make the html</h3>
+    <button data-click="clickAddCreateChild()" id="add_create_child_button">Add Create Child</button>
+    <button data-click="clickClearCreateChildren()" id="clear_create_child_button">Clear Create Child</button>
+    <table id="create_children_table" class="table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>New Name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody data-children="createChildren">
         </tbody>
     </table>
     <p id="loading_finished"></p>

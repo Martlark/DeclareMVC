@@ -1,10 +1,58 @@
-class ChildModel extends DeclareMVCChild{
+class ChildModel extends DeclareMVCChild {
     constructor(props) {
         super(props);
     }
 
     clickRemoveChild() {
         this.remove();
+    }
+}
+
+class CreateChildModel extends DeclareMVCChild {
+    constructor(props) {
+        super(props);
+    }
+
+    clickRemoveChild() {
+        this.remove();
+    }
+
+    clickToggleCase(){
+        if(this.name.toUpperCase() !== this.name){
+            this.name = this.name.toUpperCase();
+        }else{
+            this.name = this.name.toLowerCase();
+        }
+    }
+
+    create(index, parentElement) {
+        return `          
+        <tr>
+            <td>
+                <button data-click="clickRemoveChild()" data-index="${index}">Remove</button>
+                <span data-text="id"></span></td>
+            <td data-text="title"></td>
+            <td data-text="name"></td>
+            <td><input data-set="name"></td>
+            <td><button data-click="clickToggleCase()">Case Switch</button></td>
+        </tr>`;
+    }
+}
+
+class CreateByClass {
+    constructor(props) {
+        this.props = props;
+        this.message = '';
+        this.count= 0
+    }
+
+    clickMe(message){
+        this.count++;
+        this.message=`${message} ${this.count}`;
+    }
+
+    create() {
+        return `<div><span>Hello there</span><button data-click="clickMe('hello')">hello</button><span class="error" data-text="message"></span></div>`;
     }
 }
 
@@ -27,7 +75,8 @@ class ViewModel extends DeclareMVC {
         this.number_to_double = 1;
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
-
+        this.createChildren = {};
+        this.createByClass = new CreateByClass({flong: 'pong'});
 
         $(document).ready(() => {
             $.ajax('/names').then(results => {
@@ -35,6 +84,7 @@ class ViewModel extends DeclareMVC {
                 results.forEach(child => {
                     child.id += 500;
                     this.childrenAdd(new ChildModel(child), this.otherChildren);
+                    this.childrenAdd(new CreateChildModel(child), this.createChildren);
                 });
             }).always(() => {
                 $('#loading_finished').text('finished');
@@ -85,6 +135,23 @@ class ViewModel extends DeclareMVC {
                 title: 'Mrs',
                 _parent: this,
                 _parentList: this.otherChildren
+            });
+        }
+    }
+
+    clickClearCreateChildren() {
+        this.childrenClear(this.createChildren);
+    }
+
+    clickAddCreateChild(numberToAdd = 1) {
+        for (let i = 0; i < numberToAdd; i++) {
+            const id = Math.round(Math.random() * 100000);
+            this.createChildren[id] = new CreateChildModel({
+                id: id,
+                name: `Added Create Child ${id}`,
+                title: 'Ms',
+                _parent: this,
+                _parentList: this.createChildren
             });
         }
     }
