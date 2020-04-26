@@ -14,14 +14,17 @@ version history
 15-Apr-2020 1.0.6 - improve refresh performance
 16-Apr-2020 1.0.7 - improve input update
 17-Apr-2020 1.0.8 - no idea yet
+25-Apr-2020 1.1.0 - allow components
+26-Apr-2020 1.1.1 - improve components
  */
 
 
 class DeclareMVC {
-    constructor(props) {
+    constructor(parentSelector='body', props) {
         this.children = {};
-        this._version = '1.0.8';
-        this._parentSelector = props || 'body';
+        this._version = '1.1.1';
+        this._componentId = null;
+        this._parentSelector = parentSelector;
         $(document).ready(() => this._start());
     }
 
@@ -154,10 +157,31 @@ class DeclareMVC {
     }
 
     _start() {
+        if (this._parentSelector === "body") {
+            /* create any components */
+            $("[data-component]", this._parentSelector).each((index, el) => {
+                    const componentClass = $(el).data("component");
+                    eval(`new ${componentClass}(el)`);
+                }
+            );
+        }
+        const $me = $(this._parentSelector);
+        this._componentId = Math.random();
+        $me.attr('data-declare-mvc', this._componentId);
+        if (typeof this["create"] === "function") {
+            const content = this.create();
+            $me.html(content);
+        }
         this._dataValue(); // set initial input type values
         this._dataSet(); // set updaters from inputs
         this._dataClick(); // set clicks
         this.mutated('_start');
+    }
+
+    _isNotMe(el) {
+        const componentId = $(el).closest("[data-declare-mvc]").data("declare-mvc");
+
+        return this._componentId !== componentId;
     }
 
     /**
@@ -165,7 +189,11 @@ class DeclareMVC {
      */
     _dataClick() {
         $("body").on('click', "[data-click]", el => {
-            let click = $(el.target).closest('[data-click]').data('click');
+            const $target = $(el.target).closest('[data-click]');
+            let click = $target.data('click');
+            if (this._isNotMe($target)) {
+                return;
+            }
             const [_context, m] = this._dataGetContext(el.target, click, 'data-click');
             if (_context && m) {
                 const value = this._evalError(m, _context);
@@ -180,6 +208,10 @@ class DeclareMVC {
 
     _dataVisible() {
         $("[data-visible]", this._parentSelector).each((index, el) => {
+            if (this._isNotMe(el)) {
+                return true;
+            }
+
             const [_context, m] = this._dataGetContext(el, $(el).data('visible'), 'data-visible');
             if (_context && m) {
                 const newState = this._evalError(m, _context);
@@ -197,6 +229,10 @@ class DeclareMVC {
     _dataChildren() {
         const mutationList = [];
         $("[data-children]", this._parentSelector).each((index, el) => {
+            if (this._isNotMe(el)) {
+                return true;
+            }
+
             const $el = $(el);
             let state = $el.data('repeat-state');
             if (!state) {
@@ -242,6 +278,9 @@ class DeclareMVC {
     _dataText() {
         let mutated = false;
         $("[data-text]", this._parentSelector).each((index, el) => {
+            if (this._isNotMe(el)) {
+                return true;
+            }
             const [_context, m] = this._dataGetContext(el, $(el).data('text'), 'data-text');
             if (_context && m) {
                 let text = this._evalError(m, _context);
@@ -257,6 +296,9 @@ class DeclareMVC {
             }
         });
         $("[data-attr]", this._parentSelector).each((index, el) => {
+            if (this._isNotMe(el)) {
+                return true;
+            }
             const [_context, m] = this._dataGetContext(el, $(el).data('attr'), 'data-atrr');
             if (_context && m) {
                 let props = this._evalError(m, _context);
@@ -274,6 +316,9 @@ class DeclareMVC {
 
     _setInputs($element, mutated) {
         $('[data-set]', $element).each((index, el) => {
+            if (this._isNotMe(el)) {
+                return true;
+            }
             const $el = $(el), tagName = $el[0].tagName;
             if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
                 const [_context, m] = this._dataGetContext($el, $el.data('set'), 'data-set');
@@ -295,6 +340,9 @@ class DeclareMVC {
     _dataValue(mutationList) {
         let mutated = false;
         Array.from($("[data-options]", this._parentSelector)).forEach(el => {
+            if (this._isNotMe(el)) {
+                return true;
+            }
             const $el = $(el), [_context, m] = this._dataGetContext(el, $el.data('options'), 'data-options');
             if (!(_context && m)) {
                 return;
@@ -325,6 +373,9 @@ class DeclareMVC {
          * set a prop of an object instance from an input type
          */
         const set = (el) => {
+            if (this._isNotMe(el)) {
+                return true;
+            }
             const [_context, m] = this._dataGetContext(el, $(el).data('set'), 'data-set');
             if (!(_context && m)) {
                 return;

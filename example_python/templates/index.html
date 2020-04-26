@@ -11,7 +11,8 @@
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
     <script src="/cdn/declare_mvc.js"></script>
-    <script src="static/index.js"></script>
+    <script src="/static/index.js"></script>
+    <script src="/static/component.js"></script>
 </head>
 <body>
 <h1 data-text="title">Title</h1>
@@ -107,9 +108,17 @@
         <tr>
             <td>data-prop create</td>
             <td data-children="createByClass"></td>
-            <td></td>
-            <td></td>
 
+        </tr>
+        <tr>
+            <td>component 1</td>
+            <td data-component="ComponentCounter">
+            </td>
+        </tr>
+        <tr>
+            <td>component 2</td>
+            <td data-component="ComponentCounter">
+            </td>
         </tr>
         </tbody>
     </table>
