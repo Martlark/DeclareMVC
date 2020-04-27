@@ -1,8 +1,7 @@
 class ComponentCounter extends DeclareMVC {
-    constructor(parentSelector) {
-        super(parentSelector);
+    constructor(parentSelector, parent) {
+        super(parentSelector, parent);
         this.counter = 0;
-        this._parentSelector = parentSelector;
     }
 
     clickAdd() {

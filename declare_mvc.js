@@ -20,11 +20,13 @@ version history
 
 
 class DeclareMVC {
-    constructor(parentSelector='body', props) {
+    constructor(parentSelector='body', parent) {
         this.children = {};
         this._version = '1.1.1';
         this._componentId = null;
         this._parentSelector = parentSelector;
+        this._parent = parent;
+        this._components = [];
         $(document).ready(() => this._start());
     }
 
@@ -45,7 +47,7 @@ class DeclareMVC {
             changed = true;
         }
         this._dataVisible();
-        // console.log('mutated', caller, changed);
+        // mutate all components
         return changed;
     }
 
@@ -97,6 +99,10 @@ class DeclareMVC {
         return this;
     }
 
+    willUnload(){
+        // override here
+    }
+
     /* private methods */
 
     /**
@@ -116,6 +122,10 @@ class DeclareMVC {
             console.error(e, thing);
         }
         return '';
+    }
+
+    _unloading(){
+        this._components.map(component=>component.willUnload());
     }
 
     /**
@@ -161,7 +171,7 @@ class DeclareMVC {
             /* create any components */
             $("[data-component]", this._parentSelector).each((index, el) => {
                     const componentClass = $(el).data("component");
-                    eval(`new ${componentClass}(el)`);
+                    this._components.push(eval(`new ${componentClass}(el)`), this);
                 }
             );
         }
