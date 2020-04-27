@@ -20,13 +20,15 @@ version history
 
 
 class DeclareMVC {
-    constructor(parentSelector='body', parent) {
+    constructor(parentSelector = 'body', parent) {
         this.children = {};
         this._version = '1.1.1';
         this._componentId = null;
         this._parentSelector = parentSelector;
         this._parent = parent;
         this._components = [];
+        this._props = {};
+        this._setProps();
         $(document).ready(() => this._start());
     }
 
@@ -99,11 +101,43 @@ class DeclareMVC {
         return this;
     }
 
-    willUnload(){
+    willUnload() {
         // override here
     }
 
     /* private methods */
+
+    _start() {
+        if (this._parentSelector === "body") {
+            /* create any components */
+            $("[data-component]", this._parentSelector).each((index, el) => {
+                    const componentClass = $(el).data("component");
+                    this._components.push(eval(`new ${componentClass}(el)`), this);
+                }
+            );
+        }
+        const $me = $(this._parentSelector);
+        this._componentId = Math.random();
+        $me.attr('data-declare-mvc', this._componentId);
+        if (typeof this["create"] === "function") {
+            const content = this.create();
+            $me.html(content);
+        }
+        this._dataValue(); // set initial input type values
+        this._dataSet(); // set updaters from inputs
+        this._dataClick(); // set clicks
+        this.mutated('_start');
+    }
+
+    _setProps() {
+        const dataProps = $(this._parentSelector).data("props");
+        if (dataProps && dataProps.length > 3) {
+            this._evalError(`this._props=${dataProps}`, this);
+            Object.keys(this._props).forEach(k => {
+                this[k] = this._props[k];
+            });
+        }
+    }
 
     /**
      * evaluate a bit of JavaScript and return the result.  Logs errors and then
@@ -116,16 +150,18 @@ class DeclareMVC {
      * @private
      */
     _evalError(thing, _context, _value) {
-        try {
-            return eval(thing.replace(/\n/g, "\\n"));
-        } catch (e) {
-            console.error(e, thing);
+        if (thing && thing.length > 0) {
+            try {
+                return eval(thing.replace(/\n/g, "\\n"));
+            } catch (e) {
+                console.error(e, thing);
+            }
         }
         return '';
     }
 
-    _unloading(){
-        this._components.map(component=>component.willUnload());
+    _unloading() {
+        this._components.map(component => component.willUnload());
     }
 
     /**
@@ -164,28 +200,6 @@ class DeclareMVC {
             m = '_context.' + m;
         }
         return [_context, m]
-    }
-
-    _start() {
-        if (this._parentSelector === "body") {
-            /* create any components */
-            $("[data-component]", this._parentSelector).each((index, el) => {
-                    const componentClass = $(el).data("component");
-                    this._components.push(eval(`new ${componentClass}(el)`), this);
-                }
-            );
-        }
-        const $me = $(this._parentSelector);
-        this._componentId = Math.random();
-        $me.attr('data-declare-mvc', this._componentId);
-        if (typeof this["create"] === "function") {
-            const content = this.create();
-            $me.html(content);
-        }
-        this._dataValue(); // set initial input type values
-        this._dataSet(); // set updaters from inputs
-        this._dataClick(); // set clicks
-        this.mutated('_start');
     }
 
     _isNotMe(el) {

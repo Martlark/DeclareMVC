@@ -452,9 +452,13 @@ From an object property.
 Components
 ==========
 
-The *data-children* directive can be used to add components to your page.  A component is a JavaScript class
+view components
+---------------
+
+The *data-children* directive can be used to add view components to your page.  A view component is a JavaScript class
 that creates it's own HTML on the page.  This done by adding a *create()* method to the class to be used and
-to the view model for the page.
+to the view model for the page.  Then assign it as a property on the main view model.  The property name
+is then used with the *data-children* directive to refer to the view component.
 
 Example:
 --------
@@ -484,7 +488,63 @@ class ViewModel extends DeclareMVC {
     }
 }
 
-
-
-
 ```
+A view component can have it's own click handlers and any properties you want.  It cannot have children.
+
+Independent components
+----------------------
+
+You can create components that exist independently from the page view controller.  These can reside
+in their own JavaScript files.
+
+Example:
+
+```JavaScript
+
+class ComponentCounter extends DeclareMVC {
+    constructor(parentSelector, parent) {
+        super(parentSelector, parent);
+        this.counter = 0;
+    }
+
+    clickAdd() {
+        this.counter++;
+    }
+
+    clickSubtract() {
+        this.counter--;
+    }
+
+    create(index, parentElement) {
+        return `
+        <div>
+            <p>A component</p>
+            <button data-click="clickAdd()">Add</button>
+            <button data-click="clickSubtract()">Subtract</button>
+            <p data-text="counter"></p>
+        </div>`
+    }
+}
+```
+
+Add them to a page using the *data-component* directive.  The component name is the ClassName of the
+component.  Example:
+
+```html
+    <table>
+        <tbody>
+        <tr>
+            <td>component 1</td>
+            <td data-component="ComponentCounter">
+            </td>
+        </tr>
+        <tr>
+            <td>component 2</td>
+            <td data-component="ComponentCounter">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+```
+When the component *create* is called it is passed the parent html element and the view model instance.  These
+properties can be used by the component to interact with the parent view.
