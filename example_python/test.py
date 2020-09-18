@@ -85,6 +85,7 @@ class SeleniumTest(unittest.TestCase):
         assert that item is displayed.
 
         :param item: id or a selenium element.  if id is str tries to find by id
+        :param msg: optional message if assert fails
         """
         if type(item) == str:
             item = self.driver.find_element_by_id(item)
@@ -208,6 +209,11 @@ class PageIndex(SeleniumTest):
     def test_attr(self):
         s = self.driver.find_element_by_id('title')
         self.assertEqual('background: yellow;', s.get_attribute('style'))
+
+    def test_html(self):
+        s = self.driver.find_element_by_id('html_table')
+        o = s.find_elements_by_css_selector(f"td")
+        self.assertTrue(len(o) == 4)
 
     def test_select(self):
         s = self.driver.find_element_by_id('select')
