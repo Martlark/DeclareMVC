@@ -393,6 +393,26 @@ HTML
 
     <select id="select" data-set="select_value" data-options="animals"> </select>
 
+data-attr
+------------
+
+Set any attributes of an element.  The value of the data-attr is an object where each
+key is the attribute name to set and the value is the value.
+
+Attribute values can be any JavaScript expression.
+
+JavaScript model:
+
+    class ExampleModel {
+        constructor(){
+            this.attr = {'href':'https://google.com', 'class': 'flong'};
+        }
+    }
+    
+HTML
+
+    <a data-attr="attr">google</a>
+
 Methods
 =======
 
