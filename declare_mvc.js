@@ -128,13 +128,15 @@ class DeclareMVC {
     _dataGetContext(el, m, dataElement) {
         const id = $(el).closest('[data-child-id]').data('child-id');
         const prop = $(el).closest('[data-children]').data('children') || $(el).closest('[data-prop]').data('prop');
-        let _context = this.children[Number(id)] || this;
+        let _context = this.children && id && this.children[Number(id)] || this;
 
         if (prop) {
             if (id == '_prop') {
                 _context = this[prop];
             } else {
-                _context = this[prop][Number(id)] || this;
+                if(id && this[prop]) {
+                    _context = this[prop][Number(id)] || this;
+                }
             }
         }
         if (!m) {
@@ -202,7 +204,6 @@ class DeclareMVC {
             const $el = $(el);
             let state = $el.data('repeat-state');
             if (!state) {
-                ``
                 state = $el.html();
                 $el.html(null);
                 $el.data('repeat-state', state);
@@ -212,6 +213,10 @@ class DeclareMVC {
                 return;
             }
             let children = eval(m)
+            if(!children){
+                console.error(`[data-children] ${m} not found`);
+                return;
+            }
             if (typeof children.create === "function") {
                 children = {'_prop': children};
             }

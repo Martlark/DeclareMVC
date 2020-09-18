@@ -23,6 +23,12 @@ def api_names():
     return jsonify([dict(id=x + 1, name=f'Name {1 + x}', title='Mr') for x in range(5)])
 
 
+@app.route('/slow_names')
+def api_slow_names():
+    time.sleep(2.2)
+    return jsonify([dict(id=x + 1, name=f'Name {1 + x}', title='Mr') for x in range(5)])
+
+
 @app.route('/shutdown')
 def testing_shutdown():
     if app.testing:
