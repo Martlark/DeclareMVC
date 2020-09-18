@@ -327,10 +327,12 @@ As you can see *data-child-id* is added to each repeated element.  This is requi
 removals and context.  A unique *id* is **required** on each child Class instance.  The *childrenAdd* method is used
 to add a child Class instance to the default *children* property.  This method causes the page to refresh after adding.
 
-data-text
----------
+data-text, data-html
+--------------------
 
-Sets the text value of a HTML element from an instance property or method. Example:
+Sets the text or innerHTML value of a HTML element from an instance property or method. Example:
+
+Use data-html to set the innerHTML of the element.  NOTE: unsafe.
 
 JavaScript model:
 
@@ -342,12 +344,17 @@ JavaScript model:
         phoneNumberLength(){
             return this.phone.length;
         }
+        
+        htmlTable(){
+            return "<table><tr><td>A cell</td></tr></table>"
+        }
     }
     
 HTML
 
     <h3 data-text="phone"></h3>
     <h3 data-text="phoneNumberLength()"></h3>
+    <div data-html="htmlTable()"></div>
 
 
 

@@ -92,6 +92,10 @@ class ViewModel extends DeclareMVC {
         });
     }
 
+    htmlTable(){
+        return "<table style='border: black 1px solid; border-collapse: separate'><tr><td>hello</td><td>world</td></tr><tr><td>goodbye</td><td>next row</td></tr></table>";
+    }
+
     clickAjax() {
         return $.ajax(`/ajax/${this.number_to_double}`).then(result => this.ajax_value = result).fail((xhr, textStatus, errorThrown) =>
             this.ajax_value = `${textStatus}`

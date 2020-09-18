@@ -14,13 +14,14 @@ version history
 15-Apr-2020 1.0.6 - improve refresh performance
 16-Apr-2020 1.0.7 - improve input update
 17-Apr-2020 1.0.8 - no idea yet
+18-Sep-2020 1.1.1 - refactor, add data-html
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.0.8';
+        this._version = '1.1.1';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -120,7 +121,7 @@ class DeclareMVC {
      *
      * @param el - element data-* is located in
      * @param m - the method to evaluate
-     * @param dataElement - the data-* name to be found
+     * @param dataElement - the data-* name to be found (logs only)
      * @return {(*|DeclareMVC)[]|*[]|(*|DeclareMVC|string)[]}
      * @private
      */
@@ -241,34 +242,45 @@ class DeclareMVC {
 
     _dataText() {
         let mutated = false;
-        $("[data-text]", this._parentSelector).each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('text'), 'data-text');
-            if (_context && m) {
-                let text = this._evalError(m, _context);
-                if (typeof text == "undefined")
-                    text = '';
-                else
-                    text = text.toString();
-                const el_text = $(el).text();
-                if (text !== el_text) {
-                    $(el).text(text);
-                    mutated = true;
-                }
-            }
-        });
-        $("[data-attr]", this._parentSelector).each((index, el) => {
-            const [_context, m] = this._dataGetContext(el, $(el).data('attr'), 'data-atrr');
-            if (_context && m) {
-                let props = this._evalError(m, _context);
-                Object.keys(props).forEach(k => {
-                    const el_text = $(el).attr(k) || '';
-                    if (props[k] !== el_text) {
-                        $(el).attr(k, props[k]);
-                        mutated = true;
+        ["text", "html", "attr"].forEach(dataElement =>
+            $(`[data-${dataElement}]`, this._parentSelector).each((index, el) => {
+                const $el = $(el);
+                const [_context, m] = this._dataGetContext(el, $el.data(dataElement), `data-${dataElement}`);
+                if (_context && m) {
+                    let text = this._evalError(m, _context);
+                    const props = text;
+                    if (typeof text == "undefined")
+                        text = '';
+                    else
+                        text = text.toString();
+                    switch (dataElement) {
+                        case "text":
+                            const el_text = $el.text();
+                            if (text !== el_text) {
+                                $el.text(text);
+                                mutated = true;
+                            }
+                            break;
+                        case "html":
+                            const el_html = $el.html();
+                            if (text !== el_html) {
+                                $el.html(text);
+                                mutated = true;
+                            }
+                            break;
+                        case "attr":
+                            Object.keys(props).forEach(k => {
+                                const el_text = $(el).attr(k) || '';
+                                if (props[k] !== el_text) {
+                                    $(el).attr(k, props[k]);
+                                    mutated = true;
+                                }
+                            });
+                            break;
                     }
-                });
-            }
-        });
+                }
+            })
+        );
         return mutated;
     }
 
