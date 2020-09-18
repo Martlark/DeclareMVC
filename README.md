@@ -481,3 +481,18 @@ Components
 
 The *data-children* directive can be used to add components to your page.  A component is a JavaScript class
 that creates it's own HTML on the page.
+
+Usage:
+
+        
+    class CreateChildModel extends DeclareMVCChild {
+        constructor(props) {
+            super(props);
+        }
+        
+        create(index, parentElement) {
+            return `<div>I am a component</div>`;
+        }
+    }
+    
+    To be explained later on.

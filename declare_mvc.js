@@ -195,6 +195,7 @@ class DeclareMVC {
         });
     }
 
+
     _dataChildren() {
         const mutationList = [];
         $("[data-children]", this._parentSelector).each((index, el) => {
@@ -214,7 +215,7 @@ class DeclareMVC {
             if (typeof children.create === "function") {
                 children = {'_prop': children};
             }
-            const keys = Object.keys(children);
+            const keys = Object.keys(children||{});
             const currentKeys = [];
             $('[data-child-id]', el).each((index, item) => {
                 // remove any not in current children
