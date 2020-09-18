@@ -76,7 +76,7 @@ class DeclareMVC {
      */
     childrenClear(childrenProp) {
         childrenProp = childrenProp || this.children;
-        Object.keys(childrenProp).forEach(k => {
+        Object.keys(childrenProp||{}).forEach(k => {
             delete childrenProp[k];
         });
         this.mutated('childrenClear');
@@ -270,7 +270,7 @@ class DeclareMVC {
                             }
                             break;
                         case "attr":
-                            Object.keys(props).forEach(k => {
+                            Object.keys(props||{}).forEach(k => {
                                 const el_text = $(el).attr(k) || '';
                                 if (props[k] !== el_text) {
                                     $(el).attr(k, props[k]);
@@ -370,7 +370,7 @@ class DeclareMVCChild {
     constructor(props) {
         this.id = props.id;
         this._parent = props._parent;
-        Object.keys(props).map(k => this[k] = props[k]);
+        Object.keys(props||{}).map(k => this[k] = props[k]);
     }
 
     remove() {
