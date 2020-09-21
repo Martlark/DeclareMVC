@@ -21,7 +21,7 @@ version history
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.1.1';
+        this._version = '1.1.3';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -140,7 +140,7 @@ class DeclareMVC {
             }
         }
         if (!m) {
-            console.log(`no method in [${dataElement}] for element: ${el}: ${el.innerText}`);
+            console.error(`no method in [${dataElement}] for element: ${el}: ${el.innerText}`);
             return [null, null];
         }
         const leftPart = m.toString().split('(')[0];
@@ -214,7 +214,7 @@ class DeclareMVC {
             }
             let children = eval(m)
             if(!children){
-                console.error(`[data-children] ${m} not found`);
+                console.error(`[data-children] ${m} not found for element: ${el}: ${el.innerText}`);
                 return;
             }
             if (typeof children.create === "function") {
