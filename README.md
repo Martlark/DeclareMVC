@@ -203,20 +203,21 @@ is populated from a REST call.
         });
     ....
     
-Each child class instance is set into the *this.children* object using the id of the child as the property key.  This is
-the best way to organize children.  The *id* property of the child is **required**, it is used as the key for context
-and managing HTML elements.
+Each child class instance is set into the *this.children* object using the *id* of the child as the property key.  This is
+the best way to organize children.  The *id* property of the child is **required** and **must** be an integer. 
+
+It is used as the key for context and managing HTML elements.
     
     <table>
         <thead>
-        <tr>
-            <th>id</th>
-            <th>Title</th>
-            <th>Name</th>
-            <th>New Name</th>
-        </tr>
+            <tr>
+                <th>id</th>
+                <th>Title</th>
+                <th>Name</th>
+                <th>New Name</th>
+            </tr>
         </thead>
-            <tbody data-children="children">
+        <tbody data-children="children">
             <tr>
                 <td><button data-click="clickRemoveChild()">Remove</button><span data-text="id"></span></td>
                 <td data-text="title"></td>
@@ -226,9 +227,15 @@ and managing HTML elements.
         </tbody>
     </table>
 
-The HTML uses the *data-children* directive to create the <tr> rows of the table.  DeclareMVC will dynamically maintain the
-list from the properties of the children.  Here the entire <tr> element will be repeated.  When items are removed the 
-corresponding <tr> element will be removed as long as a *data-click* causes the removal, or *childrenClear()* is called.
+The HTML uses the *data-children* directive to create, in this example, the <tr> rows of the table.  
+
+The child elements of the element with the *data-children* directive is repeated for each child.  As it is repeated
+the properties and methods of the child object instance is used to set the values of the child HTML.
+ 
+DeclareMVC will dynamically maintain the list from the properties of the children.  
+
+Here the entire <tr> element will be repeated.  When items are removed the corresponding <tr> element will be removed 
+as long as a *data-click* causes the removal, or *childrenClear()* is called.
 
 Details
 =======
