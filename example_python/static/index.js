@@ -17,10 +17,10 @@ class CreateChildModel extends DeclareMVCChild {
         this.remove();
     }
 
-    clickToggleCase(){
-        if(this.name.toUpperCase() !== this.name){
+    clickToggleCase() {
+        if (this.name.toUpperCase() !== this.name) {
             this.name = this.name.toUpperCase();
-        }else{
+        } else {
             this.name = this.name.toLowerCase();
         }
     }
@@ -39,16 +39,24 @@ class CreateChildModel extends DeclareMVCChild {
     }
 }
 
+class PlainNameModel {
+    constructor(props) {
+        this.props = props;
+        this.id = props.id;
+        this.name = props.name;
+    }
+}
+
 class CreateByClass {
     constructor(props) {
         this.props = props;
         this.message = '';
-        this.count= 0
+        this.count = 0
     }
 
-    clickMe(message){
+    clickMe(message) {
         this.count++;
-        this.message=`${message} ${this.count}`;
+        this.message = `${message} ${this.count}`;
     }
 
     create() {
@@ -76,9 +84,14 @@ class ViewModel extends DeclareMVC {
         this.animals = [{value: 'dog', label: 'Dog'}, {value: 'feline', label: 'Cat'}];
         this.otherChildren = {};
         this.createChildren = {};
+        this.plainChildren = {};
         this.createByClass = new CreateByClass({flong: 'pong'});
 
         $(document).ready(() => {
+            $.ajax('/slow_names').then(results => {
+                this.childrenAdd(results.map(r => new PlainNameModel(r)), this.plainChildren);
+            });
+
             $.ajax('/names').then(results => {
                 this.childrenAdd(results.map(r => new ChildModel(r)));
                 results.forEach(child => {
@@ -92,7 +105,7 @@ class ViewModel extends DeclareMVC {
         });
     }
 
-    htmlTable(){
+    htmlTable() {
         return "<table style='border: black 1px solid; border-collapse: separate'><tr><td>hello</td><td>world</td></tr><tr><td>goodbye</td><td>next row</td></tr></table>";
     }
 
