@@ -225,6 +225,16 @@ class PageIndex(SeleniumTest):
             o.click()
             self.assertEqual(opt['value'], p.text)
 
+    def test_select_simple(self):
+        s = self.driver.find_element_by_id('select_simple')
+        p = self.driver.find_element_by_id('select_value_simple')
+        self.assertEqual("two two", p.text)
+        self.assertEqual("two two", s.get_attribute("value"))
+        for opt in ['one', 'two two']:
+            o = s.find_elements_by_css_selector(f'''option[value="{opt}"]''')[0]
+            o.click()
+            self.assertEqual(opt, p.text)
+
     def test_checkbox(self):
         s = self.driver.find_element_by_id('checkbox_input')
         p = self.driver.find_element_by_id('checkbox_value')

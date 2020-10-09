@@ -16,13 +16,14 @@ version history
 17-Apr-2020 1.0.8 - no idea yet
 18-Sep-2020 1.1.1 - refactor, add data-html
 09-Oct-2020 1.1.4 - allow checkbox to be set
+09-Oct-2020 1.1.5 - fix more than one word with options
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.1.4';
+        this._version = '1.1.5';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -325,7 +326,7 @@ class DeclareMVC {
                 $el.html(null);
                 $el.data('options-state', JSON.stringify(options));
                 options.forEach(opt => {
-                    $el.append(`<option value=${opt.value || opt}>${opt.label || opt}</option>`);
+                    $el.append(`<option value="${opt.value || opt}">${opt.label || opt}</option>`);
                 });
                 mutated = true;
             }

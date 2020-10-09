@@ -5,7 +5,8 @@
     <title>Example DeclareMVC application</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -30,7 +31,8 @@
         <tbody>
         <tr>
             <td>
-                <button data-click="clickTitleNextColor()" title="Cycle title color"><i class="fas fa-coffee"></i></button>
+                <button data-click="clickTitleNextColor()" title="Cycle title color"><i class="fas fa-coffee"></i>
+                </button>
             </td>
             <td><span data-text="viewModel.titleColors[viewModel.titleAttrIndex]"></span></td>
             <td><span data-attr="titleAttributes" id="title">Color</span></td>
@@ -91,6 +93,16 @@
 
         </tr>
         <tr>
+            <td><label for="select_simple">Select simple</label></td>
+            <td>
+                <select id="select_simple" data-set="select_value_simple" data-options="options_simple">
+                </select>
+            </td>
+            <td><span data-text="select_value_simple" id="select_value_simple"></span></td>
+            <td>simple select with <b>data-options</b></td>
+
+        </tr>
+        <tr>
             <td><label for="num_input">Number set</label></td>
             <td><input type="number" data-set="num" id="num_input"></td>
             <td><p data-text="num" id="num_value"></p></td>
@@ -147,7 +159,9 @@
 <div class="container">
     <h3>Other Children</h3>
     <button data-click="clickAddOtherChild()" id="add_other_child_button">Add Other Child</button>
-    <button data-click="clickAddOtherChild(this.numberToAdd)" id="add_other_child_button_Number">Add Other Child Number</button>
+    <button data-click="clickAddOtherChild(this.numberToAdd)" id="add_other_child_button_Number">Add Other Child
+        Number
+    </button>
     <input data-set="numberToAdd" id="add_other_child_number_to_add">
     <button data-click="clickClearOtherChild()" id="clear_other_child_button">Clear Other Child</button>
     <table id="other_children_table" class="table">
