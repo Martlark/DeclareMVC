@@ -261,6 +261,8 @@ HTML:
 
     <label>Phone number: <input type="number" data-set="phone"></label>
 
+For checkbox input type the value must be only true or false.  
+
 data-click
 ----------
 
@@ -337,9 +339,8 @@ to add a child Class instance to the default *children* property.  This method c
 data-text, data-html
 --------------------
 
-Sets the text or innerHTML value of a HTML element from an instance property or method. Example:
-
-Use data-html to set the innerHTML of the element.  NOTE: unsafe.
+Sets the text or innerHTML value of a HTML element from an instance property or method.
+Use data-html to set the innerHTML of the element.  NOTE: unsafe. Example:
 
 JavaScript model:
 

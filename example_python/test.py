@@ -228,8 +228,10 @@ class PageIndex(SeleniumTest):
     def test_checkbox(self):
         s = self.driver.find_element_by_id('checkbox_input')
         p = self.driver.find_element_by_id('checkbox_value')
+        self.assertTrue(s.is_selected())
         self.assertEqual("true", p.text)
         s.click()
+        self.assertFalse(s.is_selected())
         self.assertEqual("false", p.text)
 
     def test_promise(self):

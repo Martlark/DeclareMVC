@@ -76,7 +76,7 @@ class ViewModel extends DeclareMVC {
         this.numberToAdd = 2000;
         this.inputValue = '';
         this.text_area = '';
-        this.checkboxValue = false;
+        this.checkboxValue = true;
         this.select_value = 'feline';
         this.ajax_value = '';
         this.funcValue = '';

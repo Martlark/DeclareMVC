@@ -20,7 +20,7 @@ def page_codesandbox():
 
 @app.route('/names')
 def api_names():
-    return jsonify([dict(id=x + 1, name=f'Name {1 + x}', title='Mr') for x in range(5)])
+    return jsonify([dict(id=x + 1, name=f'Name {1 + x}', title='Mr', checked=x % 2) for x in range(5)])
 
 
 @app.route('/slow_names')

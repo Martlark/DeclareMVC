@@ -15,13 +15,14 @@ version history
 16-Apr-2020 1.0.7 - improve input update
 17-Apr-2020 1.0.8 - no idea yet
 18-Sep-2020 1.1.1 - refactor, add data-html
+09-Oct-2020 1.1.4 - allow checkbox to be set
  */
 
 
 class DeclareMVC {
     constructor(props) {
         this.children = {};
-        this._version = '1.1.3';
+        this._version = '1.1.4';
         this._parentSelector = props || 'body';
         $(document).ready(() => this._start());
     }
@@ -76,7 +77,7 @@ class DeclareMVC {
      */
     childrenClear(childrenProp) {
         childrenProp = childrenProp || this.children;
-        Object.keys(childrenProp||{}).forEach(k => {
+        Object.keys(childrenProp || {}).forEach(k => {
             delete childrenProp[k];
         });
         this.mutated('childrenClear');
@@ -134,7 +135,7 @@ class DeclareMVC {
             if (id == '_prop') {
                 _context = this[prop];
             } else {
-                if(id && this[prop]) {
+                if (id && this[prop]) {
                     _context = this[prop][Number(id)] || this;
                 }
             }
@@ -213,14 +214,14 @@ class DeclareMVC {
                 return;
             }
             let children = eval(m)
-            if(!children){
+            if (!children) {
                 console.error(`[data-children] ${m} not found for element: ${el}: ${el.innerText}`);
                 return;
             }
             if (typeof children.create === "function") {
                 children = {'_prop': children};
             }
-            const keys = Object.keys(children||{});
+            const keys = Object.keys(children || {});
             const currentKeys = [];
             $('[data-child-id]', el).each((index, item) => {
                 // remove any not in current children
@@ -275,7 +276,7 @@ class DeclareMVC {
                             }
                             break;
                         case "attr":
-                            Object.keys(props||{}).forEach(k => {
+                            Object.keys(props || {}).forEach(k => {
                                 const el_text = $(el).attr(k) || '';
                                 if (props[k] !== el_text) {
                                     $(el).attr(k, props[k]);
@@ -296,7 +297,9 @@ class DeclareMVC {
             if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
                 const [_context, m] = this._dataGetContext($el, $el.data('set'), 'data-set');
                 const text = this._evalError(m, _context) || '';
-                if (text.toString() !== $el.val()) {
+                if ($el.is(':checkbox') ) {
+                    $el.prop("checked", text)
+                } else if (text.toString() !== $el.val()) {
                     $el.val(text);
                     mutated = true;
                 }
@@ -375,7 +378,7 @@ class DeclareMVCChild {
     constructor(props) {
         this.id = props.id;
         this._parent = props._parent;
-        Object.keys(props||{}).map(k => this[k] = props[k]);
+        Object.keys(props || {}).map(k => this[k] = props[k]);
     }
 
     remove() {
