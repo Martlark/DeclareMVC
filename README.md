@@ -451,7 +451,8 @@ Updates the page if you alter properties not using *data-click*, *data-children*
 
 Add a child class instance to a view controller property.  By default uses the builtin *children* object.  
 Pass a **childrenProp** parameter to use another property.  Lists of children is maintained using the 
-child ids as key to properties of an object.
+child ids as key to properties of an object.  This method also sets the _parent and _parentList prop into 
+the child object.
 
     /***
      * remove all items from a child list property
@@ -470,6 +471,8 @@ General Operations
 Adding children to a list using a JSON ajax response
 ----------------------------------------------------
 
+childrenAdd is used to add a child object to a children object (list). 
+
     $.ajax('/names').then(results => {
         this.childrenAdd(results.map(r=>new ChildModel(r)));
     }
@@ -482,6 +485,14 @@ From an object property.
 
     clickRemoveChild() {
         this._parent.childrenRemove(this);
+    }
+
+Using the id of a child.
+
+
+    clickRemoveChild() {
+        const id = 5
+        this._parent.childrenRemove(id);
     }
 
 Components

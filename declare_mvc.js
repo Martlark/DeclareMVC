@@ -17,6 +17,7 @@ version history
 18-Sep-2020 1.1.1 - refactor, add data-html
 09-Oct-2020 1.1.4 - allow checkbox to be set
 09-Oct-2020 1.1.5 - fix more than one word with options
+10-Oct-2020 1.1.5 - mutate options after childrenAdd - add noMutate to childrenAdd
  */
 
 
@@ -54,8 +55,9 @@ class DeclareMVC {
      *
      * @param child: a single child or a list of children to add
      * @param childrenProp: (optional, defaults to children) the property to add the children to.
+     * @param noMutate: (optional, defaults to false) prevent mutation that updates the DOM
      */
-    childrenAdd(child, childrenProp) {
+    childrenAdd(child, childrenProp, noMutate) {
         childrenProp = childrenProp || this.children;
         let children = child;
         if (!Array.isArray(child)) {
@@ -66,7 +68,10 @@ class DeclareMVC {
             child._parentList = childrenProp;
             childrenProp[child.id] = child;
         });
-        this.mutated('childrenAdd');
+        if (!noMutate) {
+            this._setOptions();
+            this.mutated('childrenAdd');
+        }
         return this;
     }
 
@@ -81,6 +86,7 @@ class DeclareMVC {
         Object.keys(childrenProp || {}).forEach(k => {
             delete childrenProp[k];
         });
+        this._setOptions();
         this.mutated('childrenClear');
         return this;
     }
@@ -89,10 +95,15 @@ class DeclareMVC {
      * remove a child from it's list property
      * and then refresh the page.  For a list just marks it as removed.
      *
-     * @param childrenProp
+     * @param child - child object to remove or the id of the child
      */
     childrenRemove(child) {
-        delete child._parentList[child.id];
+        if (typeof child == 'object') {
+            delete child._parentList[child.id];
+        } else {
+            delete child._parentList[child];
+        }
+        this._setOptions();
         this.mutated('childrenRemove');
         return this;
     }
@@ -298,7 +309,7 @@ class DeclareMVC {
             if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tagName)) {
                 const [_context, m] = this._dataGetContext($el, $el.data('set'), 'data-set');
                 const text = this._evalError(m, _context) || '';
-                if ($el.is(':checkbox') ) {
+                if ($el.is(':checkbox')) {
                     $el.prop("checked", text)
                 } else if (text.toString() !== $el.val()) {
                     $el.val(text);
@@ -316,6 +327,20 @@ class DeclareMVC {
      */
     _dataValue(mutationList) {
         let mutated = false;
+        mutated = this._setOptions();
+
+        if (mutationList) {
+            mutationList.forEach($repeatedElement => {
+                mutated = this._setInputs($repeatedElement, mutated);
+            });
+        } else {
+            mutated = this._setInputs(this._parentSelector, mutated)
+        }
+        return mutated
+    }
+
+    _setOptions() {
+        let mutated = false;
         Array.from($("[data-options]", this._parentSelector)).forEach(el => {
             const $el = $(el), [_context, m] = this._dataGetContext(el, $el.data('options'), 'data-options');
             if (!(_context && m)) {
@@ -331,15 +356,7 @@ class DeclareMVC {
                 mutated = true;
             }
         });
-
-        if (mutationList) {
-            mutationList.forEach($repeatedElement => {
-                mutated = this._setInputs($repeatedElement, mutated);
-            });
-        } else {
-            mutated = this._setInputs(this._parentSelector, mutated)
-        }
-        return mutated
+        return mutated;
     }
 
     _dataSet() {
